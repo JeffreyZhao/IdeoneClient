@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using IdeoneClient.Ideone;
 
 namespace IdeoneClient
@@ -10,11 +7,11 @@ namespace IdeoneClient
     {
         private readonly string _username;
         private readonly string _password;
-        private readonly IdeoneSoapService _service;
+        private readonly IIdeoneSoapService _soapService;
 
-        internal IdeoneService(IdeoneSoapService service, string username, string password)
+        internal IdeoneService(IIdeoneSoapService soapService, string username, string password)
         {
-            this._service = service;
+            this._soapService = soapService;
             this._username = username;
             this._password = password;
         }
@@ -30,7 +27,7 @@ namespace IdeoneClient
         public Dictionary<string, object> Test()
         {
             var dict = new Dictionary<string, object>();
-            var results = this._service.TestFunction(this._username, this._password);
+            var results = this._soapService.TestFunction(this._username, this._password);
             return dict;
         }
     }

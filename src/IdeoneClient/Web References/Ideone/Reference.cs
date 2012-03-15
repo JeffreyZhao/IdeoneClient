@@ -13,42 +13,38 @@
 // 
 #pragma warning disable 1591
 
-namespace IdeoneClient.Ideone {
-    using System;
-    using System.Web.Services;
-    using System.Diagnostics;
-    using System.Web.Services.Protocols;
-    using System.ComponentModel;
-    using System.Xml.Serialization;
-    
-    
+namespace IdeoneClient.Ideone
+{
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Web.Services.WebServiceBindingAttribute(Name="Ideone_Service_v1Binding", Namespace="http://ideone.com/api/1/service")]
-    public partial class IdeoneSoapService : System.Web.Services.Protocols.SoapHttpClientProtocol {
-        
+    [System.Web.Services.WebServiceBindingAttribute(Name = "Ideone_Service_v1Binding", Namespace = "http://ideone.com/api/1/service")]
+    internal partial class IdeoneSoapService : System.Web.Services.Protocols.SoapHttpClientProtocol
+    {
         private System.Threading.SendOrPostCallback createSubmissionOperationCompleted;
-        
+
         private System.Threading.SendOrPostCallback getSubmissionStatusOperationCompleted;
-        
+
         private System.Threading.SendOrPostCallback getSubmissionDetailsOperationCompleted;
-        
+
         private System.Threading.SendOrPostCallback getLanguagesOperationCompleted;
-        
+
         private System.Threading.SendOrPostCallback testFunctionOperationCompleted;
-        
+
         private bool useDefaultCredentialsSetExplicitly;
-        
+
         /// <remarks/>
-        public IdeoneSoapService(string url) {
+        public IdeoneSoapService(string url)
+        {
             this.Url = url;
-            if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
+            if ((this.IsLocalFileSystemWebService(this.Url) == true))
+            {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
             }
-            else {
+            else
+            {
                 this.useDefaultCredentialsSetExplicitly = true;
             }
         }
@@ -56,50 +52,58 @@ namespace IdeoneClient.Ideone {
         public IdeoneSoapService()
             : this("http://ideone.com/api/1/service")
         { }
-        
-        public new string Url {
-            get {
+
+        public new string Url
+        {
+            get
+            {
                 return base.Url;
             }
-            set {
-                if ((((this.IsLocalFileSystemWebService(base.Url) == true) 
-                            && (this.useDefaultCredentialsSetExplicitly == false)) 
-                            && (this.IsLocalFileSystemWebService(value) == false))) {
+            set
+            {
+                if ((((this.IsLocalFileSystemWebService(base.Url) == true)
+                            && (this.useDefaultCredentialsSetExplicitly == false))
+                            && (this.IsLocalFileSystemWebService(value) == false)))
+                {
                     base.UseDefaultCredentials = false;
                 }
                 base.Url = value;
             }
         }
-        
-        public new bool UseDefaultCredentials {
-            get {
+
+        public new bool UseDefaultCredentials
+        {
+            get
+            {
                 return base.UseDefaultCredentials;
             }
-            set {
+            set
+            {
                 base.UseDefaultCredentials = value;
                 this.useDefaultCredentialsSetExplicitly = true;
             }
         }
-        
+
         /// <remarks/>
         public event createSubmissionCompletedEventHandler createSubmissionCompleted;
-        
+
         /// <remarks/>
         public event getSubmissionStatusCompletedEventHandler getSubmissionStatusCompleted;
-        
+
         /// <remarks/>
         public event getSubmissionDetailsCompletedEventHandler getSubmissionDetailsCompleted;
-        
+
         /// <remarks/>
         public event getLanguagesCompletedEventHandler getLanguagesCompleted;
-        
+
         /// <remarks/>
         public event testFunctionCompletedEventHandler testFunctionCompleted;
-        
+
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapRpcMethodAttribute("http://ideone.com/api/1/service#createSubmission", RequestNamespace="http://ideone.com/api/1/service", ResponseNamespace="http://ideone.com/api/1/service")]
+        [System.Web.Services.Protocols.SoapRpcMethodAttribute("http://ideone.com/api/1/service#createSubmission", RequestNamespace = "http://ideone.com/api/1/service", ResponseNamespace = "http://ideone.com/api/1/service")]
         [return: System.Xml.Serialization.SoapElementAttribute("return")]
-        public object[] createSubmission(string user, string pass, string sourceCode, int language, string input, bool run, bool @private) {
+        public object[] createSubmission(string user, string pass, string sourceCode, int language, string input, bool run, bool @private)
+        {
             object[] results = this.Invoke("createSubmission", new object[] {
                         user,
                         pass,
@@ -110,15 +114,18 @@ namespace IdeoneClient.Ideone {
                         @private});
             return ((object[])(results[0]));
         }
-        
+
         /// <remarks/>
-        public void createSubmissionAsync(string user, string pass, string sourceCode, int language, string input, bool run, bool @private) {
+        public void createSubmissionAsync(string user, string pass, string sourceCode, int language, string input, bool run, bool @private)
+        {
             this.createSubmissionAsync(user, pass, sourceCode, language, input, run, @private, null);
         }
-        
+
         /// <remarks/>
-        public void createSubmissionAsync(string user, string pass, string sourceCode, int language, string input, bool run, bool @private, object userState) {
-            if ((this.createSubmissionOperationCompleted == null)) {
+        public void createSubmissionAsync(string user, string pass, string sourceCode, int language, string input, bool run, bool @private, object userState)
+        {
+            if ((this.createSubmissionOperationCompleted == null))
+            {
                 this.createSubmissionOperationCompleted = new System.Threading.SendOrPostCallback(this.OncreateSubmissionOperationCompleted);
             }
             this.InvokeAsync("createSubmission", new object[] {
@@ -130,33 +137,39 @@ namespace IdeoneClient.Ideone {
                         run,
                         @private}, this.createSubmissionOperationCompleted, userState);
         }
-        
-        private void OncreateSubmissionOperationCompleted(object arg) {
-            if ((this.createSubmissionCompleted != null)) {
+
+        private void OncreateSubmissionOperationCompleted(object arg)
+        {
+            if ((this.createSubmissionCompleted != null))
+            {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.createSubmissionCompleted(this, new createSubmissionCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
-        
+
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapRpcMethodAttribute("http://ideone.com/api/1/service#getSubmissionStatus", RequestNamespace="http://ideone.com/api/1/service", ResponseNamespace="http://ideone.com/api/1/service")]
+        [System.Web.Services.Protocols.SoapRpcMethodAttribute("http://ideone.com/api/1/service#getSubmissionStatus", RequestNamespace = "http://ideone.com/api/1/service", ResponseNamespace = "http://ideone.com/api/1/service")]
         [return: System.Xml.Serialization.SoapElementAttribute("return")]
-        public object[] getSubmissionStatus(string user, string pass, string link) {
+        public object[] getSubmissionStatus(string user, string pass, string link)
+        {
             object[] results = this.Invoke("getSubmissionStatus", new object[] {
                         user,
                         pass,
                         link});
             return ((object[])(results[0]));
         }
-        
+
         /// <remarks/>
-        public void getSubmissionStatusAsync(string user, string pass, string link) {
+        public void getSubmissionStatusAsync(string user, string pass, string link)
+        {
             this.getSubmissionStatusAsync(user, pass, link, null);
         }
-        
+
         /// <remarks/>
-        public void getSubmissionStatusAsync(string user, string pass, string link, object userState) {
-            if ((this.getSubmissionStatusOperationCompleted == null)) {
+        public void getSubmissionStatusAsync(string user, string pass, string link, object userState)
+        {
+            if ((this.getSubmissionStatusOperationCompleted == null))
+            {
                 this.getSubmissionStatusOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetSubmissionStatusOperationCompleted);
             }
             this.InvokeAsync("getSubmissionStatus", new object[] {
@@ -164,18 +177,21 @@ namespace IdeoneClient.Ideone {
                         pass,
                         link}, this.getSubmissionStatusOperationCompleted, userState);
         }
-        
-        private void OngetSubmissionStatusOperationCompleted(object arg) {
-            if ((this.getSubmissionStatusCompleted != null)) {
+
+        private void OngetSubmissionStatusOperationCompleted(object arg)
+        {
+            if ((this.getSubmissionStatusCompleted != null))
+            {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.getSubmissionStatusCompleted(this, new getSubmissionStatusCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
-        
+
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapRpcMethodAttribute("http://ideone.com/api/1/service#getSubmissionDetails", RequestNamespace="http://ideone.com/api/1/service", ResponseNamespace="http://ideone.com/api/1/service")]
+        [System.Web.Services.Protocols.SoapRpcMethodAttribute("http://ideone.com/api/1/service#getSubmissionDetails", RequestNamespace = "http://ideone.com/api/1/service", ResponseNamespace = "http://ideone.com/api/1/service")]
         [return: System.Xml.Serialization.SoapElementAttribute("return")]
-        public object[] getSubmissionDetails(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStderr, bool withCmpinfo) {
+        public object[] getSubmissionDetails(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStderr, bool withCmpinfo)
+        {
             object[] results = this.Invoke("getSubmissionDetails", new object[] {
                         user,
                         pass,
@@ -187,15 +203,18 @@ namespace IdeoneClient.Ideone {
                         withCmpinfo});
             return ((object[])(results[0]));
         }
-        
+
         /// <remarks/>
-        public void getSubmissionDetailsAsync(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStderr, bool withCmpinfo) {
+        public void getSubmissionDetailsAsync(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStderr, bool withCmpinfo)
+        {
             this.getSubmissionDetailsAsync(user, pass, link, withSource, withInput, withOutput, withStderr, withCmpinfo, null);
         }
-        
+
         /// <remarks/>
-        public void getSubmissionDetailsAsync(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStderr, bool withCmpinfo, object userState) {
-            if ((this.getSubmissionDetailsOperationCompleted == null)) {
+        public void getSubmissionDetailsAsync(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStderr, bool withCmpinfo, object userState)
+        {
+            if ((this.getSubmissionDetailsOperationCompleted == null))
+            {
                 this.getSubmissionDetailsOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetSubmissionDetailsOperationCompleted);
             }
             this.InvokeAsync("getSubmissionDetails", new object[] {
@@ -208,221 +227,259 @@ namespace IdeoneClient.Ideone {
                         withStderr,
                         withCmpinfo}, this.getSubmissionDetailsOperationCompleted, userState);
         }
-        
-        private void OngetSubmissionDetailsOperationCompleted(object arg) {
-            if ((this.getSubmissionDetailsCompleted != null)) {
+
+        private void OngetSubmissionDetailsOperationCompleted(object arg)
+        {
+            if ((this.getSubmissionDetailsCompleted != null))
+            {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.getSubmissionDetailsCompleted(this, new getSubmissionDetailsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
-        
+
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapRpcMethodAttribute("http://ideone.com/api/1/service#getLanguages", RequestNamespace="http://ideone.com/api/1/service", ResponseNamespace="http://ideone.com/api/1/service")]
+        [System.Web.Services.Protocols.SoapRpcMethodAttribute("http://ideone.com/api/1/service#getLanguages", RequestNamespace = "http://ideone.com/api/1/service", ResponseNamespace = "http://ideone.com/api/1/service")]
         [return: System.Xml.Serialization.SoapElementAttribute("return")]
-        public object[] GetLanguages(string user, string pass) {
+        public object[] getLanguages(string user, string pass)
+        {
             object[] results = this.Invoke("getLanguages", new object[] {
                         user,
                         pass});
             return ((object[])(results[0]));
         }
-        
+
         /// <remarks/>
-        public void getLanguagesAsync(string user, string pass) {
+        public void getLanguagesAsync(string user, string pass)
+        {
             this.getLanguagesAsync(user, pass, null);
         }
-        
+
         /// <remarks/>
-        public void getLanguagesAsync(string user, string pass, object userState) {
-            if ((this.getLanguagesOperationCompleted == null)) {
+        public void getLanguagesAsync(string user, string pass, object userState)
+        {
+            if ((this.getLanguagesOperationCompleted == null))
+            {
                 this.getLanguagesOperationCompleted = new System.Threading.SendOrPostCallback(this.OngetLanguagesOperationCompleted);
             }
             this.InvokeAsync("getLanguages", new object[] {
                         user,
                         pass}, this.getLanguagesOperationCompleted, userState);
         }
-        
-        private void OngetLanguagesOperationCompleted(object arg) {
-            if ((this.getLanguagesCompleted != null)) {
+
+        private void OngetLanguagesOperationCompleted(object arg)
+        {
+            if ((this.getLanguagesCompleted != null))
+            {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.getLanguagesCompleted(this, new getLanguagesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
-        
+
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapRpcMethodAttribute("http://ideone.com/api/1/service#testFunction", RequestNamespace="http://ideone.com/api/1/service", ResponseNamespace="http://ideone.com/api/1/service")]
+        [System.Web.Services.Protocols.SoapRpcMethodAttribute("http://ideone.com/api/1/service#testFunction", RequestNamespace = "http://ideone.com/api/1/service", ResponseNamespace = "http://ideone.com/api/1/service")]
         [return: System.Xml.Serialization.SoapElementAttribute("return")]
-        public object[] TestFunction(string user, string pass) {
+        public object[] testFunction(string user, string pass)
+        {
             object[] results = this.Invoke("testFunction", new object[] {
                         user,
                         pass});
             return ((object[])(results[0]));
         }
-        
+
         /// <remarks/>
-        public void testFunctionAsync(string user, string pass) {
+        public void testFunctionAsync(string user, string pass)
+        {
             this.testFunctionAsync(user, pass, null);
         }
-        
+
         /// <remarks/>
-        public void testFunctionAsync(string user, string pass, object userState) {
-            if ((this.testFunctionOperationCompleted == null)) {
+        public void testFunctionAsync(string user, string pass, object userState)
+        {
+            if ((this.testFunctionOperationCompleted == null))
+            {
                 this.testFunctionOperationCompleted = new System.Threading.SendOrPostCallback(this.OntestFunctionOperationCompleted);
             }
             this.InvokeAsync("testFunction", new object[] {
                         user,
                         pass}, this.testFunctionOperationCompleted, userState);
         }
-        
-        private void OntestFunctionOperationCompleted(object arg) {
-            if ((this.testFunctionCompleted != null)) {
+
+        private void OntestFunctionOperationCompleted(object arg)
+        {
+            if ((this.testFunctionCompleted != null))
+            {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.testFunctionCompleted(this, new testFunctionCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
-        
+
         /// <remarks/>
-        public new void CancelAsync(object userState) {
+        public new void CancelAsync(object userState)
+        {
             base.CancelAsync(userState);
         }
-        
-        private bool IsLocalFileSystemWebService(string url) {
-            if (((url == null) 
-                        || (url == string.Empty))) {
+
+        private bool IsLocalFileSystemWebService(string url)
+        {
+            if (((url == null)
+                        || (url == string.Empty)))
+            {
                 return false;
             }
             System.Uri wsUri = new System.Uri(url);
-            if (((wsUri.Port >= 1024) 
-                        && (string.Compare(wsUri.Host, "localHost", System.StringComparison.OrdinalIgnoreCase) == 0))) {
+            if (((wsUri.Port >= 1024)
+                        && (string.Compare(wsUri.Host, "localHost", System.StringComparison.OrdinalIgnoreCase) == 0)))
+            {
                 return true;
             }
             return false;
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void createSubmissionCompletedEventHandler(object sender, createSubmissionCompletedEventArgs e);
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class createSubmissionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
+    public partial class createSubmissionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
         private object[] results;
-        
-        internal createSubmissionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
+
+        internal createSubmissionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
             this.results = results;
         }
-        
+
         /// <remarks/>
-        public object[] Result {
-            get {
+        public object[] Result
+        {
+            get
+            {
                 this.RaiseExceptionIfNecessary();
                 return ((object[])(this.results[0]));
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void getSubmissionStatusCompletedEventHandler(object sender, getSubmissionStatusCompletedEventArgs e);
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class getSubmissionStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
+    public partial class getSubmissionStatusCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
         private object[] results;
-        
-        internal getSubmissionStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
+
+        internal getSubmissionStatusCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
             this.results = results;
         }
-        
+
         /// <remarks/>
-        public object[] Result {
-            get {
+        public object[] Result
+        {
+            get
+            {
                 this.RaiseExceptionIfNecessary();
                 return ((object[])(this.results[0]));
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void getSubmissionDetailsCompletedEventHandler(object sender, getSubmissionDetailsCompletedEventArgs e);
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class getSubmissionDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
+    public partial class getSubmissionDetailsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
         private object[] results;
-        
-        internal getSubmissionDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
+
+        internal getSubmissionDetailsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
             this.results = results;
         }
-        
+
         /// <remarks/>
-        public object[] Result {
-            get {
+        public object[] Result
+        {
+            get
+            {
                 this.RaiseExceptionIfNecessary();
                 return ((object[])(this.results[0]));
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void getLanguagesCompletedEventHandler(object sender, getLanguagesCompletedEventArgs e);
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class getLanguagesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
+    public partial class getLanguagesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
         private object[] results;
-        
-        internal getLanguagesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
+
+        internal getLanguagesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
             this.results = results;
         }
-        
+
         /// <remarks/>
-        public object[] Result {
-            get {
+        public object[] Result
+        {
+            get
+            {
                 this.RaiseExceptionIfNecessary();
                 return ((object[])(this.results[0]));
             }
         }
     }
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void testFunctionCompletedEventHandler(object sender, testFunctionCompletedEventArgs e);
-    
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class testFunctionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
+    public partial class testFunctionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    {
+
         private object[] results;
-        
-        internal testFunctionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
+
+        internal testFunctionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) :
+            base(exception, cancelled, userState)
+        {
             this.results = results;
         }
-        
+
         /// <remarks/>
-        public object[] Result {
-            get {
+        public object[] Result
+        {
+            get
+            {
                 this.RaiseExceptionIfNecessary();
                 return ((object[])(this.results[0]));
             }
