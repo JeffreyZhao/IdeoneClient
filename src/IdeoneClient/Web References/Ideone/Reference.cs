@@ -27,7 +27,7 @@ namespace IdeoneClient.Ideone {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="Ideone_Service_v1Binding", Namespace="http://ideone.com/api/1/service")]
-    public partial class IdeoneService : System.Web.Services.Protocols.SoapHttpClientProtocol {
+    public partial class IdeoneSoapService : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
         private System.Threading.SendOrPostCallback createSubmissionOperationCompleted;
         
@@ -42,18 +42,18 @@ namespace IdeoneClient.Ideone {
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
-        public IdeoneService(string url) {
+        public IdeoneSoapService(string url) {
             this.Url = url;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
             }
             else {
-               
+                this.useDefaultCredentialsSetExplicitly = true;
             }
         }
 
-        public IdeoneService()
+        public IdeoneSoapService()
             : this("http://ideone.com/api/1/service")
         { }
         
@@ -251,7 +251,7 @@ namespace IdeoneClient.Ideone {
         /// <remarks/>
         [System.Web.Services.Protocols.SoapRpcMethodAttribute("http://ideone.com/api/1/service#testFunction", RequestNamespace="http://ideone.com/api/1/service", ResponseNamespace="http://ideone.com/api/1/service")]
         [return: System.Xml.Serialization.SoapElementAttribute("return")]
-        public object[] testFunction(string user, string pass) {
+        public object[] TestFunction(string user, string pass) {
             object[] results = this.Invoke("testFunction", new object[] {
                         user,
                         pass});
