@@ -1,5 +1,10 @@
 ﻿using System.Collections.Generic;
 using IdeoneClient.Ideone;
+using System.Xml;
+using System;
+using System.Linq;
+using System.Security.Authentication;
+using System.Collections;
 
 namespace IdeoneClient
 {
@@ -24,11 +29,62 @@ namespace IdeoneClient
             : this(new IdeoneSoapService(), username, password)
         { }
 
+        public Dictionary<int, string> GetLanguages()
+        {
+            return this.Handle(() =>
+            {
+                var result = this._soapService.GetLanguages(this._username, this._password);
+                this.CheckError(result);
+
+                var languages = (Hashtable)result["languages"];
+                return languages.Cast<DictionaryEntry>().ToDictionary(
+                    p => (int)p.Key,
+                    p => (string)p.Value);
+            });
+        }
+
         public Dictionary<string, object> Test()
         {
-            var dict = new Dictionary<string, object>();
-            var results = this._soapService.TestFunction(this._username, this._password);
-            return dict;
+            return this.Handle(() =>
+            {
+                var result = this._soapService.TestFunction(this._username, this._password);
+                this.CheckError(result);
+
+                result.Remove("error");
+                return result.Cast<DictionaryEntry>().ToDictionary(
+                    p => (string)p.Key,
+                    p => p.Value);
+            });
+        }
+
+        private T Handle<T>(Func<T> body)
+        {
+            try
+            {
+                return body();
+            }
+            catch (IdeoneException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new IdeoneException("Ideone API goes wrong: it doesn't meet the contract.", ex);
+            }
+        }
+
+        private void CheckError(Hashtable result)
+        {
+            var status = (string)result["error"];
+            switch (status)
+            {
+                case "OK":
+                    return;
+                case "AUTH_ERROR":
+                    throw new AuthenticationFailedException("Authetication failed for " + this._username);
+                default:
+                    throw new IdeoneException("Unexpected status: " + status);
+            }
         }
     }
 }

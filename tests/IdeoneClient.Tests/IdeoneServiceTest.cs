@@ -15,18 +15,9 @@ namespace IdeoneClient.Tests
         public IdeoneServiceTest()
         {
             this._username = "jeffz";
-            this._password = "asdfasdf";
+            this._password = "12345678";
             this._soapServiceMock = new Mock<IIdeoneSoapService>(MockBehavior.Strict);
             this._service = new IdeoneService(this._soapServiceMock.Object, this._username, this._password);
-        }
-
-        public class Test : IdeoneServiceTest
-        {
-            [Fact]
-            public void Succeeded_ReturnResults()
-            {
-                var results = this._service.Test();
-            }
         }
     }
 }
