@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using IdeoneClient.Ideone;
-using System.Xml;
-using System;
-using System.Linq;
-using System.Security.Authentication;
+﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using IdeoneClient.Ideone;
 
 namespace IdeoneClient
 {
@@ -21,6 +20,18 @@ namespace IdeoneClient
             this._password = password;
         }
 
+        public IWebProxy Proxy
+        {
+            get
+            {
+                return this._soapService.Proxy;
+            }
+            set
+            {
+                this._soapService.Proxy = value;
+            }
+        }
+
         public IdeoneService(string url, string username, string password)
             : this(new IdeoneSoapService(url), username, password)
         { }
@@ -33,13 +44,71 @@ namespace IdeoneClient
         {
             return this.Handle(() =>
             {
-                var result = this._soapService.GetLanguages(this._username, this._password);
-                this.CheckError(result);
+                var data = this._soapService.GetLanguages(this._username, this._password);
+                this.CheckError(data);
 
-                var languages = (Hashtable)result["languages"];
+                var languages = (Hashtable)data["languages"];
                 return languages.Cast<DictionaryEntry>().ToDictionary(
                     p => (int)p.Key,
                     p => (string)p.Value);
+            });
+        }
+
+        public string CreateSubmission(string sourceCode, int languageId, string input, bool run, bool isPrivate)
+        {
+            return this.Handle(() =>
+            {
+                var data = this._soapService.CreateSubmission(this._username, this._password, sourceCode, languageId, input, run, isPrivate);
+                this.CheckError(data);
+                return (string)data["link"];
+            });
+        }
+
+        public SubmissionStatus GetSubmissionStatus(string link)
+        {
+            return this.Handle(() => 
+            {
+                var data = this._soapService.GetSubmissionStatus(this._username, this._password, link);
+                this.CheckError(data);
+
+                return new SubmissionStatus
+                {
+                    State = (SubmissionState)(int)data["status"],
+                    Result = (SubmissionResult)(int)data["result"]
+                };
+            });
+        }
+
+        private DateTime ConvertTime(string time)
+        {
+            return DateTime.ParseExact(time, "yyyy-MM-dd HH:mm:ss", null).AddHours(-1).ToLocalTime();
+        }
+
+        public SubmissionDetail GetSubmissionDetail(string link, bool withSource, bool withInput, bool withOutput, bool withStdErr, bool withCompileInfo)
+        {
+            return this.Handle(() =>
+            {
+                var data = this._soapService.GetSubmissionDetail(this._username, this._password, link, withSource, withInput, withOutput, withStdErr, withCompileInfo);
+                this.CheckError(data);
+
+                return new SubmissionDetail()
+                {
+                    Time = (float)data["time"],
+                    IsPublic = (bool)data["public"],
+                    State = (SubmissionState)(int)data["status"],
+                    Signal = (int)data["signal"],
+                    CreateAt = ConvertTime((string)data["date"]),
+                    LanguageID = (int)data["langId"],
+                    LanguageName = (string)data["langName"],
+                    Result = (SubmissionResult)(int)data["result"],
+                    Memory = (int)data["memory"],
+                    // Optional
+                    Source = (string)data["source"],
+                    Input = (string)data["input"],
+                    Output = (string)data["output"],
+                    Error = (string)data["stderr"],
+                    CompileInfo = (string)data["cmpinfo"]
+                };
             });
         }
 
@@ -69,7 +138,7 @@ namespace IdeoneClient
             }
             catch (Exception ex)
             {
-                throw new IdeoneException("Ideone API goes wrong: it doesn't meet the contract.", ex);
+                throw new IdeoneException("Ideone API goes wrong: " + ex.Message, ex);
             }
         }
 

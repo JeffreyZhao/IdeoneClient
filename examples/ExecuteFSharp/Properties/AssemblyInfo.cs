@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("IdeoneClient.Tests")]
+[assembly: AssemblyTitle("ExecuteFSharp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("IdeoneClient.Tests")]
+[assembly: AssemblyProduct("ExecuteJavaScript")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("54d6e122-6342-4281-8d10-6eb3432680a8")]
+[assembly: Guid("72ec9654-e51a-4fed-b8a1-6789cfea4774")]
 
 // Version information for an assembly consists of the following four values:
 //

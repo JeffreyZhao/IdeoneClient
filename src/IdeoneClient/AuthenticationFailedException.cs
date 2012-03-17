@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace IdeoneClient
+﻿namespace IdeoneClient
 {
     public class AuthenticationFailedException : IdeoneException
     {

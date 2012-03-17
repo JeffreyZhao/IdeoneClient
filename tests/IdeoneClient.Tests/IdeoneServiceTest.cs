@@ -1,7 +1,5 @@
 ﻿using IdeoneClient.Ideone;
 using Moq;
-using Xunit;
-using System;
 
 namespace IdeoneClient.Tests
 {

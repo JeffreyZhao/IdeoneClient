@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using Xunit;
-using System.Collections;
 
 namespace IdeoneClient.Tests
 {
