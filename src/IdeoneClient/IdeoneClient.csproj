@@ -42,8 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthenticationFailedException.cs" />
-    <Compile Include="IdeoneException.cs" />
+    <Compile Include="Exceptions.cs" />
     <Compile Include="IdeoneService.cs" />
     <Compile Include="Ideone\IdeoneSoapService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

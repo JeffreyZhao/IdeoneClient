@@ -150,7 +150,15 @@ namespace IdeoneClient
                 case "OK":
                     return;
                 case "AUTH_ERROR":
-                    throw new AuthenticationFailedException("Authetication failed for " + this._username);
+                    throw new AuthenticationFailedException(this._username);
+                case "PASTE_NOT_FOUND":
+                    throw new PasteNotFoundException();
+                case "WRONG_LANG_ID":
+                    throw new LanguageNotFoundException();
+                case "ACCESS_DENIED":
+                    throw new AccessDeniedException();
+                case "CANNOT_SUBMIT_THIS_ MONTH_ANYMORE":
+                    throw new MonthlyLimitExceededException();
                 default:
                     throw new IdeoneException("Unexpected status: " + status);
             }

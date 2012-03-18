@@ -67,8 +67,7 @@ fib 20 |> printf ""%d""";
                 Console.WriteLine(ex.Message);
             }
 
-
-            Console.WriteLine("Press enter to exit.");
+            Console.WriteLine("Press enter to exit...");
             Console.ReadLine();
         }
     }
