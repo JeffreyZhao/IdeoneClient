@@ -20,7 +20,7 @@ fib 20 |> printf ""%d""";
 
         static void Main(string[] args)
         {
-            var service = new IdeoneService("your_user", "your_pass"); // use your account
+            var service = new IdeoneService("username", "password"); // use your account
 
             try
             {
@@ -30,7 +30,7 @@ fib 20 |> printf ""%d""";
                 Console.WriteLine(fsharp);
 
                 Console.Write("Creating submission: ");
-                var link = service.CreateSubmission(_code, fsharp.Key, "", true, true);
+                var link = service.CreateSubmission(fsharp.Key, _code, "", true, true);
                 Console.WriteLine(link);
 
                 SubmissionStatus status;

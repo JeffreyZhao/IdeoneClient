@@ -1,5 +1,6 @@
 *.suo
 *.csproj.user
+.DS_Store
 packages/
 bin/
 obj/

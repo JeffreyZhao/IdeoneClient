@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{4D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecuteFSharp", "examples\ExecuteFSharp\ExecuteFSharp.csproj", "{093864C0-0A4D-474D-BF12-DBFB81EF2DF9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdeoneClient.Web", "examples\IdeoneClient.Web\IdeoneClient.Web.csproj", "{77517E60-63A0-40C7-9790-17EAE121F601}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,16 @@ Global
 		{093864C0-0A4D-474D-BF12-DBFB81EF2DF9}.Release|Mixed Platforms.Build.0 = Release|x86
 		{093864C0-0A4D-474D-BF12-DBFB81EF2DF9}.Release|x86.ActiveCfg = Release|x86
 		{093864C0-0A4D-474D-BF12-DBFB81EF2DF9}.Release|x86.Build.0 = Release|x86
+		{77517E60-63A0-40C7-9790-17EAE121F601}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77517E60-63A0-40C7-9790-17EAE121F601}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77517E60-63A0-40C7-9790-17EAE121F601}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{77517E60-63A0-40C7-9790-17EAE121F601}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{77517E60-63A0-40C7-9790-17EAE121F601}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{77517E60-63A0-40C7-9790-17EAE121F601}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77517E60-63A0-40C7-9790-17EAE121F601}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77517E60-63A0-40C7-9790-17EAE121F601}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{77517E60-63A0-40C7-9790-17EAE121F601}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{77517E60-63A0-40C7-9790-17EAE121F601}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,5 +73,6 @@ Global
 		{D3FF20B2-D9C0-462A-9D7B-76B02CC37F3E} = {62994D87-AFE8-4F58-A37C-3D20C9B9644F}
 		{7F768BA6-EB06-4590-93B7-50EAC19F1FD8} = {E3A872BF-F456-4E2E-A4A1-2721A7127C99}
 		{093864C0-0A4D-474D-BF12-DBFB81EF2DF9} = {4D2D46EF-83BF-49AC-9FF9-1FB7CFE451B8}
+		{77517E60-63A0-40C7-9790-17EAE121F601} = {4D2D46EF-83BF-49AC-9FF9-1FB7CFE451B8}
 	EndGlobalSection
 EndGlobal

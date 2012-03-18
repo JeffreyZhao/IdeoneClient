@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Test</title>
+    <style>
+        #code, #output
+        {
+            width: 640px;
+            height: 180px;
+            font-family: Consolas, Monaco;
+            font-size: 12pt;
+        }
+    </style>
+
+    <script src="scripts/jquery-1.5.1.min.js"></script>
+    <script src="scripts/jscex.bundle.min.js"></script>
+    <script src="scripts/lib.js"></script>
+
+    <script>
+        var defaultCodes = {
+            27: "using System;\n\npublic class Test\n{\n    public static void Main()\n    {\n        Console.WriteLine(\"Hello World!\");\n    }\n}",
+            124: "printfn \"Hello World!\"",
+            39: "object Main {\n    def main(args: Array[String]) {\n        println(\"Hello World!\")\n    }\n}",
+            17: "puts \"Hello World!\"",
+            4: "print \"Hello Wordl!\"",
+            112: "print(\"Hello World!\");"
+        }
+
+        var languageChanged = function () {
+            var languageId = $("#language").val();
+            $("#code").val(defaultCodes[languageId]);
+        }
+
+        $(document).ready(function () {
+            languageChanged();
+            $("#output").val("");
+        });
+
+        var write = function (s) {
+            var o = $("#output");
+            o.val(o.val() + s);
+
+            o.scrollTop(o[0].scrollHeight);
+        }
+
+        var Async = Jscex.Async;
+
+        var execute = eval(Jscex.compile("async", function () {
+            var languageId = $("#language").val();
+            var code = $("#code").val();
+
+            write("Creating submission: ");
+            var link = $await($.ajaxAsync({
+                url: "/create",
+                data: { languageId: $("#language").val(), sourceCode: $("#code").val() }
+            }));
+            write(link + "\n");
+
+            var status;
+            while (true) {
+                status = $await($.ajaxAsync({ url: "/status/" + link, type: "get" }));
+                write(status.state + "\n");
+
+                if (status.state == "Done") {
+                    break;
+                }
+
+                $await(Async.sleep(1000));
+            }
+
+            var detail = $await($.ajaxAsync({ url: "/detail/" + link, type: "get", cache: true }));
+            write("Time: " + detail.time + "s\n");
+            write("Memory: " + detail.memory + "kb\n");
+
+            if (detail.error) {
+                write("Error: " + detail.error + "\n");
+            }
+
+            if (detail.compileInfo) {
+                write("Compile Info: " + detail.compileInfo + "\n");
+            }
+
+            if (detail.output) {
+                write("Output: " + detail.output + "\n");
+            }
+        }));
+    </script>
+</head>
+<body>
+    <p>
+        <select id="language" onchange="languageChanged()">
+            <option value="27">C#</option>
+            <option value="124">F#</option>
+            <option value="39">Scala</option>
+            <option value="17">Ruby</option>
+            <option value="4">Python</option>
+            <option value="112">JavaScript</option>
+        </select>
+        <input type="button" id="btnExecute" value="Execute" onclick="execute().start();" />
+    </p>
+
+    <p>Code:</p>
+    <p><textarea id="code"></textarea></p>
+
+    <p>Output:</p>
+    <p><textarea id="output"></textarea></p>
+</body>
+</html>
