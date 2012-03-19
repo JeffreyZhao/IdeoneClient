@@ -41,10 +41,11 @@ namespace IdeoneClient.Web.Controllers
             return Content(json, "application/json");
         }
 
-        public ActionResult Languages()
+        [HttpGet]
+        public ActionResult GetLanguages()
         {
             var languages = this.IdeoneService.GetLanguages();
-            return Json(languages.ToDictionary(p => p.Key.ToString(), p => p.Value), JsonRequestBehavior.AllowGet);
+            return JsonEx(languages);
         }
 
         [HttpPost]

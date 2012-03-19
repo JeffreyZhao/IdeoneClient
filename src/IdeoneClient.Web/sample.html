@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Test</title>
+    <title>Sample</title>
     <style>
         #code, #output
         {
@@ -14,27 +14,49 @@
 
     <script src="scripts/jquery-1.5.1.min.js"></script>
     <script src="scripts/jscex.bundle.min.js"></script>
-    <script src="scripts/sample.js"></script>
+    <script src="scripts/jscex-bindings.js"></script>
+    <script src="scripts/languages.js"></script>
+    <script src="scripts/base64.js"></script>
 
     <script>
-        var defaultCodes = {
-            27: "using System;\n\npublic class Test\n{\n    public static void Main()\n    {\n        Console.WriteLine(\"Hello World!\");\n    }\n}",
-            124: "printfn \"Hello World!\"",
-            39: "object Main {\n    def main(args: Array[String]) {\n        println(\"Hello World!\")\n    }\n}",
-            17: "puts \"Hello World!\"",
-            4: "print \"Hello World!\"",
-            112: "print(\"Hello World!\");"
-        }
-
-        var languageChanged = function () {
-            var languageId = $("#language").val();
-            $("#code").val(defaultCodes[languageId]);
-        }
+        $.ajaxSetup({
+            type: "post",
+            dataType: "json",
+            cache: false,
+            beforeSend: function (xhr, options) {
+                xhr.setRequestHeader("Authorization", "Basic " + Base64.encode("jeffz:12345678"));
+            }
+        });
 
         $(document).ready(function () {
-            languageChanged();
-            $("#output").val("");
+            $.ajax({
+                url: "/languages",
+                type: "get",
+                success: function (data) {
+                    var sltLanguages = $("#sltLanguages");
+                    sltLanguages.empty();
+
+                    $.each(data, function (key, value) {
+                        sltLanguages
+                            .append($("<option></option>")
+                            .attr("value", key)
+                            .text(value));
+                    });
+
+                    $("#btnLoadSample").removeAttr("disabled"); 
+                    $("#btnExecute").removeAttr("disabled"); 
+                },
+                error: function () {
+                    alert("Failed to load the language list.");
+                }
+            });
         });
+
+        var loadSample = function () {
+            var languageId = $("#sltLanguages").val();
+            var lang = languages[languageId];
+            $("#code").val(lang ? lang.source : "");
+        }
 
         var write = function (s) {
             var o = $("#output");
@@ -46,13 +68,13 @@
         var Async = Jscex.Async;
 
         var execute = eval(Jscex.compile("async", function () {
-            var languageId = $("#language").val();
+            var languageId = $("#sltLanguages").val();
             var code = $("#code").val();
 
             write("Creating submission: ");
             var link = $await($.ajaxAsync({
                 url: "/pastes",
-                data: { languageId: $("#language").val(), sourceCode: $("#code").val() }
+                data: { languageId: $("#sltLanguages").val(), sourceCode: $("#code").val() }
             }));
             write(link + "\n");
 
@@ -88,15 +110,9 @@
 </head>
 <body>
     <p>
-        <select id="language" onchange="languageChanged()">
-            <option value="27">C#</option>
-            <option value="124">F#</option>
-            <option value="39">Scala</option>
-            <option value="17">Ruby</option>
-            <option value="4">Python</option>
-            <option value="112">JavaScript</option>
-        </select>
-        <input type="button" id="btnExecute" value="Execute" onclick="execute().start();" />
+        <select id="sltLanguages"><option>Loading...</option></select>
+        <input type="button" id="btnLoadSample" value="Load Sample" disabled="disabled" onclick="loadSample();" />
+        <input type="button" id="btnExecute" value="Execute" disabled="disabled" onclick="execute().start();" />
     </p>
 
     <p>Code:</p>

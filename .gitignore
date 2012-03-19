@@ -1,6 +1,7 @@
 *.suo
-*.csproj.user
+*.user
 .DS_Store
 packages/
 bin/
 obj/
+csx/

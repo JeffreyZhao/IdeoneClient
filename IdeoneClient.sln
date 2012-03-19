@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExecuteFSharp", "examples\E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdeoneClient.Web", "src\IdeoneClient.Web\IdeoneClient.Web.csproj", "{122F1B44-B1AB-46AB-9AF0-C7A5CCA58AB5}"
 EndProject
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "IdeoneClient.Web.Azure", "src\IdeoneClient.Web.Azure\IdeoneClient.Web.Azure.ccproj", "{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,16 @@ Global
 		{122F1B44-B1AB-46AB-9AF0-C7A5CCA58AB5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{122F1B44-B1AB-46AB-9AF0-C7A5CCA58AB5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{122F1B44-B1AB-46AB-9AF0-C7A5CCA58AB5}.Release|x86.ActiveCfg = Release|Any CPU
+		{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +84,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D3FF20B2-D9C0-462A-9D7B-76B02CC37F3E} = {62994D87-AFE8-4F58-A37C-3D20C9B9644F}
 		{122F1B44-B1AB-46AB-9AF0-C7A5CCA58AB5} = {62994D87-AFE8-4F58-A37C-3D20C9B9644F}
+		{09A49E95-2BAE-4CDE-86F3-1A7A27F3D83B} = {62994D87-AFE8-4F58-A37C-3D20C9B9644F}
 		{7F768BA6-EB06-4590-93B7-50EAC19F1FD8} = {E3A872BF-F456-4E2E-A4A1-2721A7127C99}
 		{093864C0-0A4D-474D-BF12-DBFB81EF2DF9} = {4D2D46EF-83BF-49AC-9FF9-1FB7CFE451B8}
 	EndGlobalSection
