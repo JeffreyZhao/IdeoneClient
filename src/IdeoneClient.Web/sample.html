@@ -24,32 +24,8 @@
             dataType: "json",
             cache: false,
             beforeSend: function (xhr, options) {
-                xhr.setRequestHeader("Authorization", "Basic " + Base64.encode("jeffz:12345678"));
+                xhr.setRequestHeader("Authorization", "Basic " + Base64.encode(options.auth || "username:password"));
             }
-        });
-
-        $(document).ready(function () {
-            $.ajax({
-                url: "/languages",
-                type: "get",
-                success: function (data) {
-                    var sltLanguages = $("#sltLanguages");
-                    sltLanguages.empty();
-
-                    $.each(data, function (key, value) {
-                        sltLanguages
-                            .append($("<option></option>")
-                            .attr("value", key)
-                            .text(value));
-                    });
-
-                    $("#btnLoadSample").removeAttr("disabled"); 
-                    $("#btnExecute").removeAttr("disabled"); 
-                },
-                error: function () {
-                    alert("Failed to load the language list.");
-                }
-            });
         });
 
         var loadSample = function () {
@@ -67,45 +43,79 @@
 
         var Async = Jscex.Async;
 
-        var execute = eval(Jscex.compile("async", function () {
-            var languageId = $("#sltLanguages").val();
-            var code = $("#code").val();
+        var loadLanguages = eval(Jscex.compile("async", function () {
+            try {
+                var data = $await($.ajaxAsync({
+                    url: "/languages",
+                    type: "get",
+                    auth: "jeffreyzhaojie:12345678"
+                }));
 
-            write("Creating submission: ");
-            var link = $await($.ajaxAsync({
-                url: "/pastes",
-                data: { languageId: $("#sltLanguages").val(), sourceCode: $("#code").val() }
-            }));
-            write(link + "\n");
+                var sltLanguages = $("#sltLanguages");
+                sltLanguages.empty();
 
-            var status;
-            while (true) {
-                status = $await($.ajaxAsync({ url: "/paste/" + link + "/status", type: "get" }));
-                write(status.state + "\n");
+                $.each(data, function (key, value) {
+                    sltLanguages
+                    .append($("<option></option>")
+                    .attr("value", key)
+                    .text(value));
+                });
 
-                if (status.state == "Done") {
-                    break;
-                }
-
-                $await(Async.sleep(1000));
-            }
-
-            var detail = $await($.ajaxAsync({ url: "/paste/" + link, type: "get", cache: true }));
-            write("Time: " + detail.time + "s\n");
-            write("Memory: " + detail.memory + "kb\n");
-
-            if (detail.error) {
-                write("Error: " + detail.error + "\n");
-            }
-
-            if (detail.compileInfo) {
-                write("Compile Info: " + detail.compileInfo + "\n");
-            }
-
-            if (detail.output) {
-                write("Output: " + detail.output + "\n");
+                $("#btnLoadSample").removeAttr("disabled");
+                $("#btnExecute").removeAttr("disabled");
+            } catch (ex) {
+                alert("Failed to load languages: " + ex.message);
+                return;
             }
         }));
+
+        var execute = eval(Jscex.compile("async", function () {
+            try {
+                var languageId = $("#sltLanguages").val();
+                var code = $("#code").val();
+
+                write("Creating submission: ");
+                var link = $await($.ajaxAsync({
+                    url: "/pastes",
+                    data: { languageId: $("#sltLanguages").val(), sourceCode: $("#code").val() }
+                }));
+                write(link + "\n");
+
+                var status;
+                while (true) {
+                    status = $await($.ajaxAsync({ url: "/paste/" + link + "/status", type: "get" }));
+                    write(status.state + "\n");
+
+                    if (status.state == "Done") {
+                        break;
+                    }
+
+                    $await(Async.sleep(1000));
+                }
+
+                var detail = $await($.ajaxAsync({ url: "/paste/" + link, type: "get", cache: true }));
+                write("Time: " + detail.time + "s\n");
+                write("Memory: " + detail.memory + "kb\n");
+
+                if (detail.error) {
+                    write("Error: " + detail.error + "\n");
+                }
+
+                if (detail.compileInfo) {
+                    write("Compile Info: " + detail.compileInfo + "\n");
+                }
+
+                if (detail.output) {
+                    write("Output: " + detail.output + "\n");
+                }
+            } catch (ex) {
+                debugger;
+            }
+        }));
+
+        $(document).ready(function () {
+            loadLanguages().start();
+        });
     </script>
 </head>
 <body>

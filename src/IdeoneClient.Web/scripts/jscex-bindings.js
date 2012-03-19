@@ -7,12 +7,12 @@ $.ajaxAsync = function (options) {
             t.complete("success", data);
         }
 
-        options.error = function (jqXHR, textStatus, errorThrow) {
-            t.complete("failure", {
-                jqXHR: jqXHR,
-                textStatus: textStatus,
-                errorThrow: errorThrow
-            });
+        options.error = function (xhr, textStatus, errorThrow) {
+            if (xhr.getResponseHeader("Content-Type") == "application/json") {
+                t.complete("failure", $.parseJSON(xhr.responseText));
+            } else {
+                t.complete("failure", xhr.responseText);
+            }
         };
 
         $.ajax(options);
