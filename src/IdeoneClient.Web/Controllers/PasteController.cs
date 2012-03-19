@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace IdeoneClient.Web.Controllers
 {
-    public class IdeoneController : Controller
+    public class PasteController : Controller
     {
         private IdeoneService IdeoneService
         {

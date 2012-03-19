@@ -13,21 +13,21 @@ namespace IdeoneClient.Web
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-                "Ideone/Create",
-                "create",
-                new { controller = "Ideone", action = "Create" }
+                "Paste/Create",
+                "pastes",
+                new { controller = "Paste", action = "Create" }
             );
 
             routes.MapRoute(
-                "Ideone/GetStatus",
-                "status/{link}",
-                new { controller = "Ideone", action = "GetStatus" }
+                "Paste/GetStatus",
+                "paste/{link}/status",
+                new { controller = "Paste", action = "GetStatus" }
             );
 
             routes.MapRoute(
-                "Ideone/Detail",
-                "detail/{link}",
-                new { controller = "Ideone", action = "GetDetail" }
+                "Paste/Detail",
+                "paste/{link}",
+                new { controller = "Paste", action = "GetDetail" }
             );
 
             routes.MapRoute(

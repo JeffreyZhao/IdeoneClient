@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\HttpStatusCodeResult.cs" />
-    <Compile Include="Controllers\IdeoneController.cs" />
+    <Compile Include="Controllers\PasteController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

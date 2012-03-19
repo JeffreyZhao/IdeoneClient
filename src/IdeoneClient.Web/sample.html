@@ -51,14 +51,14 @@
 
             write("Creating submission: ");
             var link = $await($.ajaxAsync({
-                url: "/create",
+                url: "/pastes",
                 data: { languageId: $("#language").val(), sourceCode: $("#code").val() }
             }));
             write(link + "\n");
 
             var status;
             while (true) {
-                status = $await($.ajaxAsync({ url: "/status/" + link, type: "get" }));
+                status = $await($.ajaxAsync({ url: "/paste/" + link + "/status", type: "get" }));
                 write(status.state + "\n");
 
                 if (status.state == "Done") {
@@ -68,7 +68,7 @@
                 $await(Async.sleep(1000));
             }
 
-            var detail = $await($.ajaxAsync({ url: "/detail/" + link, type: "get", cache: true }));
+            var detail = $await($.ajaxAsync({ url: "/paste/" + link, type: "get", cache: true }));
             write("Time: " + detail.time + "s\n");
             write("Memory: " + detail.memory + "kb\n");
 
