@@ -81,7 +81,8 @@ namespace IdeoneClient
 
         private DateTime ConvertTime(string time)
         {
-            return DateTime.ParseExact(time, "yyyy-MM-dd HH:mm:ss", null).AddHours(-1).ToLocalTime();
+            var utc = DateTime.ParseExact(time, "yyyy-MM-dd HH:mm:ss", null).AddHours(-1);
+            return new DateTime(utc.Year, utc.Month, utc.Day, utc.Hour, utc.Minute, utc.Second, DateTimeKind.Utc);
         }
 
         public SubmissionDetail GetSubmissionDetail(string link, bool withSource, bool withInput, bool withOutput, bool withStdErr, bool withCompileInfo)

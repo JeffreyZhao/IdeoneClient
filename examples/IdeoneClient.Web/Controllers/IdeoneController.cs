@@ -1,8 +1,11 @@
 ﻿using System;
-using System.Json;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace IdeoneClient.Web.Controllers
 {
@@ -21,6 +24,23 @@ namespace IdeoneClient.Web.Controllers
             }
         }
 
+        private readonly JsonSerializerSettings DefaultSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore,
+            Converters = new List<JsonConverter>()
+            {
+                new StringEnumConverter(),
+                new IsoDateTimeConverter()
+            }
+        };
+
+        private ActionResult JsonEx(object obj, JsonSerializerSettings settings = null)
+        {
+            var json = JsonConvert.SerializeObject(obj, Formatting.None, settings ?? DefaultSettings);
+            return Content(json, "application/json");
+        }
+
         public ActionResult Languages()
         {
             var languages = this.IdeoneService.GetLanguages();
@@ -31,35 +51,21 @@ namespace IdeoneClient.Web.Controllers
         public ActionResult Create(int languageId, string sourceCode, string input = "", bool run = true, bool isPrivate = true)
         {
             var link = this.IdeoneService.CreateSubmission(languageId, sourceCode, input, run, isPrivate);
-            return new JsonValueResult(link);
+            return JsonEx(link);
         }
 
         [HttpGet]
         public ActionResult GetStatus(string link)
         {
             var status = this.IdeoneService.GetSubmissionStatus(link);
-            var json = new JsonObject
-            {
-                { "state", status.State.ToString() },
-                { "result", status.Result.ToString() }
-            };
-
-            return new JsonValueResult(json);
+            return JsonEx(status);
         }
 
+        [HttpGet]
         public ActionResult GetDetail(string link, bool withSource = false, bool withInput = false, bool withOutput = true, bool withStdErr = true, bool withCompileInfo = true)
         {
             var detail = this.IdeoneService.GetSubmissionDetail(link, withSource, withInput, withOutput, withStdErr, withCompileInfo);
-            var json = new JsonObject
-            {
-                { "time", detail.Time },
-                { "memory", detail.Memory },
-                { "error", detail.Error },
-                { "compileInfo", detail.CompileInfo },
-                { "output", detail.Output }
-            };
-
-            return new JsonValueResult(json);
+            return JsonEx(detail);
         }
 
         private ActionResult ErrorToResult(Exception ex)
