@@ -1,14 +1,22 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Sample</title>
+    <title>Restful Ideone API Sample</title>
     <style>
-        #code, #output
+        .code
+        {
+            font-family: Consolas, Monaco;
+            font-size: 12pt;
+        }
+        #txtCode 
         {
             width: 640px;
             height: 180px;
-            font-family: Consolas, Monaco;
-            font-size: 12pt;
+        }
+        #txtInput
+        {
+            width: 640px;
+            height: 100px;
         }
     </style>
 
@@ -24,21 +32,15 @@
             dataType: "json",
             cache: false,
             beforeSend: function (xhr, options) {
-                xhr.setRequestHeader("Authorization", "Basic " + Base64.encode(options.auth || "username:password"));
+                xhr.setRequestHeader("Authorization", "Basic " + Base64.encode(options.auth));
             }
         });
 
         var loadSample = function () {
             var languageId = $("#sltLanguages").val();
             var lang = languages[languageId];
-            $("#code").val(lang ? lang.source : "");
-        }
-
-        var write = function (s) {
-            var o = $("#output");
-            o.val(o.val() + s);
-
-            o.scrollTop(o[0].scrollHeight);
+            $("#txtCode").val(lang ? lang.source : "");
+            $("#txtInput").val(lang ? lang.input : "");
         }
 
         var Async = Jscex.Async;
@@ -56,35 +58,52 @@
 
                 $.each(data, function (key, value) {
                     sltLanguages
-                    .append($("<option></option>")
-                    .attr("value", key)
-                    .text(value));
+                        .append($("<option></option>")
+                        .attr("value", key)
+                        .text(value));
                 });
 
                 $("#btnLoadSample").removeAttr("disabled");
                 $("#btnExecute").removeAttr("disabled");
             } catch (ex) {
+                if (ex.source != "xhr") throw ex;
                 alert("Failed to load languages: " + ex.message);
-                return;
             }
         }));
 
         var execute = eval(Jscex.compile("async", function () {
-            try {
-                var languageId = $("#sltLanguages").val();
-                var code = $("#code").val();
 
-                write("Creating submission: ");
+            var auth = $("#txtUserName").val() + ":" + $("#txtPassword").val();
+            if (auth.length < 3) {
+                alert("Please input the username and password.");
+                return;
+            }
+
+            $("#btnLoadSample").attr("disabled", "disabled");
+            $("#btnExecute").attr("disabled", "disabled");
+
+            var langId = $("#sltLanguages").val();
+            var code = $("#txtCode").val();
+            var input = $("#txtInput").val();
+            var preStatus = $("#preStatus");
+
+            try {
+                preStatus.text("Creating submission...");
                 var link = $await($.ajaxAsync({
                     url: "/pastes",
-                    data: { languageId: $("#sltLanguages").val(), sourceCode: $("#code").val() }
+                    data: { languageId: langId, sourceCode: code, input: input },
+                    auth: auth
                 }));
-                write(link + "\n");
 
                 var status;
                 while (true) {
-                    status = $await($.ajaxAsync({ url: "/paste/" + link + "/status", type: "get" }));
-                    write(status.state + "\n");
+                    status = $await($.ajaxAsync({
+                        url: "/paste/" + link + "/status",
+                        type: "get",
+                        auth: auth
+                    }));
+
+                    preStatus.text(status.state);
 
                     if (status.state == "Done") {
                         break;
@@ -93,23 +112,36 @@
                     $await(Async.sleep(1000));
                 }
 
-                var detail = $await($.ajaxAsync({ url: "/paste/" + link, type: "get", cache: true }));
-                write("Time: " + detail.time + "s\n");
-                write("Memory: " + detail.memory + "kb\n");
+                var detail = $await($.ajaxAsync({
+                    url: "/paste/" + link,
+                    type: "get",
+                    cache: true,
+                    auth: auth
+                }));
+
+                var lines = [];
+                lines.push("Time: " + detail.time + "s");
+                lines.push("Memory: " + detail.memory + "kb");
 
                 if (detail.error) {
-                    write("Error: " + detail.error + "\n");
+                    lines.push("Error: " + detail.error);
                 }
 
                 if (detail.compileInfo) {
-                    write("Compile Info: " + detail.compileInfo + "\n");
+                    lines.push("Compile Info: " + detail.compileInfo);
                 }
 
                 if (detail.output) {
-                    write("Output: " + detail.output + "\n");
+                    lines.push("Output: " + detail.output);
                 }
+
+                preStatus.text(lines.join("\n"));
             } catch (ex) {
-                debugger;
+                if (ex.source != "xhr") throw ex;
+                preStatus.text("Failed to execute the code: " + ex.message);
+            } finally {
+                $("#btnLoadSample").removeAttr("disabled");
+                $("#btnExecute").removeAttr("disabled");
             }
         }));
 
@@ -125,11 +157,19 @@
         <input type="button" id="btnExecute" value="Execute" disabled="disabled" onclick="execute().start();" />
     </p>
 
-    <p>Code:</p>
-    <p><textarea id="code"></textarea></p>
+    <p>
+        Username: <input type="text" id="txtUserName" />
+        Password: <input type="password" id="txtPassword" />
+        <a href="#" target="_blank">Visit here if you don't know what it is.</a>
+    </p>
 
-    <p>Output:</p>
-    <p><textarea id="output"></textarea></p>
+    <p>Code:</p>
+    <p><textarea id="txtCode" class="code"></textarea></p>
+
+    <p>Input:</p>
+    <p><textarea id="txtInput" class="code"></textarea></p>
+
+    <pre id="preStatus" class="code">(... status shows here ...)</pre>
 
     <p>This page uses <a href="http://ideone.com">ideone.com</a> &copy; by <a href="http://sphere-research.com">Sphere Research Labs</a></p>
 </body>

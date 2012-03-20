@@ -51,6 +51,7 @@ namespace IdeoneClient.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult Create(int languageId, string sourceCode, string input = "", bool run = true, bool isPrivate = true)
         {
             var link = this.IdeoneService.CreateSubmission(languageId, sourceCode, input, run, isPrivate);

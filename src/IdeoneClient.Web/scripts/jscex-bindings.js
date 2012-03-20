@@ -8,11 +8,16 @@ $.ajaxAsync = function (options) {
         }
 
         options.error = function (xhr, textStatus, errorThrow) {
+            var ex;
+
             if (xhr.getResponseHeader("Content-Type") == "application/json") {
-                t.complete("failure", $.parseJSON(xhr.responseText));
+                var ex = $.parseJSON(xhr.responseText);
             } else {
-                t.complete("failure", xhr.responseText);
+                var ex = { message: errorThrow };
             }
+
+            ex.source = "xhr";
+            t.complete("failure", ex);
         };
 
         $.ajax(options);
