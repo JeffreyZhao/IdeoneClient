@@ -154,13 +154,12 @@
     <p>
         <select id="sltLanguages"><option>Loading...</option></select>
         <input type="button" id="btnLoadSample" value="Load Sample" disabled="disabled" onclick="loadSample();" />
-        <input type="button" id="btnExecute" value="Execute" disabled="disabled" onclick="execute().start();" />
     </p>
 
     <p>
         Username: <input type="text" id="txtUserName" />
         Password: <input type="password" id="txtPassword" />
-        <a href="#" target="_blank">Visit here if you don't know what it is.</a>
+        <a href="http://ideone.com/offer/users/" target="_blank">Visit here if you don't know what it is.</a>
     </p>
 
     <p>Code:</p>
@@ -168,6 +167,10 @@
 
     <p>Input:</p>
     <p><textarea id="txtInput" class="code"></textarea></p>
+
+    <p>
+        <input type="button" id="btnExecute" value="Execute" disabled="disabled" onclick="execute().start();" />
+    </p>
 
     <pre id="preStatus" class="code">(... status shows here ...)</pre>
 
