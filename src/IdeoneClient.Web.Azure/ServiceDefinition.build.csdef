@@ -9,16 +9,16 @@
   **********************************************************************************************
 -->
 <ServiceDefinition name="IdeoneClient.Web.Azure" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceDefinition">
-  <WebRole name="IdeoneClient.Web" vmsize="ExtraSmall" enableNativeCodeExecution="false">
+  <WebRole name="IdeoneClient.Web" vmsize="ExtraSmall" enableNativeCodeExecution="true">
     <Sites>
       <Site name="Web">
         <Bindings>
-          <Binding name="Endpoint1" endpointName="Endpoint1" />
+          <Binding name="Endpoint1" endpointName="Default" />
         </Bindings>
       </Site>
     </Sites>
     <Endpoints>
-      <InputEndpoint name="Endpoint1" protocol="http" port="8080" />
+      <InputEndpoint name="Default" protocol="http" port="8080" />
     </Endpoints>
     <Imports></Imports>
   </WebRole>
