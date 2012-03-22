@@ -22,6 +22,8 @@ namespace IdeoneClient.Ideone
 
         Hashtable GetSubmissionStatus(string user, string pass, string link);
 
+        void GetSubmissionStatusAsync(string user, string pass, string link, Action<IdeoneSoapResult> callback);
+
         Hashtable GetSubmissionDetail(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStdErr, bool withCompileInfo);
     }
 
@@ -85,6 +87,26 @@ namespace IdeoneClient.Ideone
         public Hashtable GetSubmissionStatus(string user, string pass, string link)
         {
             return Utils.ParseXmlNodes((XmlNode[])this.getSubmissionStatus(user, pass, link));
+        }
+
+        public void GetSubmissionStatusAsync(string user, string pass, string link, Action<IdeoneSoapResult> callback)
+        {
+            getSubmissionStatusCompletedEventHandler onCompleted = null;
+
+            var state = new object();
+
+            onCompleted = new getSubmissionStatusCompletedEventHandler((_, args) =>
+            {
+                if (args.UserState != state) return;
+
+                this.getSubmissionStatusCompleted -= onCompleted;
+
+                callback(new IdeoneSoapResult(args));
+            });
+
+            this.getSubmissionStatusCompleted += onCompleted;
+
+            this.getSubmissionStatusAsync(user, pass, link, state);
         }
 
         public Hashtable GetSubmissionDetail(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStdErr, bool withCompileInfo)

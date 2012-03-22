@@ -86,6 +86,9 @@ namespace IdeoneClient
                 {
                     try
                     {
+                        var data = result.Data;
+                        this.CheckError(data);
+
                         tcs.SetResult(dataProcessor(result.Data));
                     }
                     catch (IdeoneException ex)
@@ -103,6 +106,8 @@ namespace IdeoneClient
         }
 
         #endregion
+
+        #region GetLanguages
 
         private Dictionary<int, string> ProcessGetLangaugesData(Hashtable data)
         {
@@ -126,6 +131,10 @@ namespace IdeoneClient
                 this.ProcessGetLangaugesData);
         }
 
+        #endregion
+
+        #region CreateSubmission
+
         private string ProcessCreateSubmissionData(Hashtable data)
         {
             return (string)data["link"];
@@ -145,20 +154,34 @@ namespace IdeoneClient
                 this.ProcessCreateSubmissionData);
         }
 
+        #endregion
+
+        #region GetSubmissionStatus
+
+        private SubmissionStatus ProcessGetSubmissionStatusData(Hashtable data)
+        {
+            return new SubmissionStatus
+            {
+                State = (SubmissionState)(int)data["status"],
+                Result = (SubmissionResult)(int)data["result"]
+            };
+        }
+
         public SubmissionStatus GetSubmissionStatus(string link)
         {
-            return this.Handle(() => 
-            {
-                var data = this._soapService.GetSubmissionStatus(this._username, this._password, link);
-                this.CheckError(data);
-
-                return new SubmissionStatus
-                {
-                    State = (SubmissionState)(int)data["status"],
-                    Result = (SubmissionResult)(int)data["result"]
-                };
-            });
+            return this.Handle(
+                () => this._soapService.GetSubmissionStatus(this._username, this._password, link),
+                this.ProcessGetSubmissionStatusData);
         }
+
+        public Task<SubmissionStatus> GetSubmissionStatusAsync(string link)
+        {
+            return this.HandleAsync(
+                cb => this._soapService.GetSubmissionStatusAsync(this._username, this._password, link, cb),
+                this.ProcessGetSubmissionStatusData);
+        }
+
+        #endregion
 
         private DateTime ConvertTime(string time)
         {

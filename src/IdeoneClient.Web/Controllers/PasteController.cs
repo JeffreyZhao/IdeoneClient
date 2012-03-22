@@ -51,14 +51,22 @@ namespace IdeoneClient.Web.Controllers
                 .GetLanguagesAsync()
                 .ContinueWith(t =>
                 {
-                    this.AsyncManager.Parameters["languages"] = t.Result;
+                    if (t.Exception != null)
+                    {
+                        this.AsyncManager.Parameters["error"] = t.Exception;
+                    }
+                    else
+                    {
+                        this.AsyncManager.Parameters["languages"] = t.Result;
+                    }
+                    
                     this.AsyncManager.OutstandingOperations.Decrement();
                 });
         }
 
-        public ActionResult GetLanguagesCompleted(Dictionary<int, string> languages)
+        public ActionResult GetLanguagesCompleted(Exception error, Dictionary<int, string> languages)
         {
-            return new JsonNetResult(languages);
+            return error == null ? new JsonNetResult(languages) : ErrorToResult(error);
         }
 
         [HttpPost]
@@ -71,21 +79,49 @@ namespace IdeoneClient.Web.Controllers
                 .CreateSubmissionAsync(languageId, sourceCode, input, run, isPrivate)
                 .ContinueWith(t =>
                 {
-                    this.AsyncManager.Parameters["link"] = t.Result;
+                    if (t.Exception != null)
+                    {
+                        this.AsyncManager.Parameters["error"] = t.Exception;
+                    }
+                    else
+                    {
+                        this.AsyncManager.Parameters["link"] = t.Result;
+                    }
+
                     this.AsyncManager.OutstandingOperations.Decrement();
                 });
         }
 
-        public ActionResult CreateCompleted(string link)
+        public ActionResult CreateCompleted(Exception error, string link)
         {
-            return new JsonNetResult(link);
+            return error == null ? new JsonNetResult(link) : ErrorToResult(error);
         }
 
         [HttpGet]
-        public ActionResult GetStatus(string link)
+        public void GetStatusAsync(string link)
         {
-            var status = this.IdeoneService.GetSubmissionStatus(link);
-            return new JsonNetResult(status);
+            this.AsyncManager.OutstandingOperations.Increment();
+
+            this.IdeoneService
+                .GetSubmissionStatusAsync(link)
+                .ContinueWith(t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        this.AsyncManager.Parameters["error"] = t.Exception;
+                    }
+                    else
+                    {
+                        this.AsyncManager.Parameters["status"] = t.Result;
+                    }
+
+                    this.AsyncManager.OutstandingOperations.Decrement();
+                });
+        }
+
+        public ActionResult GetStatusCompleted(Exception error, SubmissionStatus status)
+        {
+            return error == null ? new JsonNetResult(status) : ErrorToResult(error);
         }
 
         [HttpGet]
@@ -102,6 +138,19 @@ namespace IdeoneClient.Web.Controllers
 
         private ActionResult ErrorToResult(Exception ex)
         {
+            while (true)
+            {
+                var aggEx = ex as AggregateException;
+                if (aggEx != null)
+                {
+                    ex = aggEx.InnerExceptions[0];
+                }
+                else
+                {
+                    break;
+                }
+            }
+
             if (ex is AuthenticationFailedException || ex is AuthenticationException)
             {
                 return CreateErrorResult(401, ex.Message);
