@@ -43,6 +43,28 @@ namespace IdeoneClient
 
         #region Helpers
 
+        private void CheckError(Hashtable result)
+        {
+            var status = (string)result["error"];
+            switch (status)
+            {
+                case "OK":
+                    return;
+                case "AUTH_ERROR":
+                    throw new AuthenticationFailedException(this._username);
+                case "PASTE_NOT_FOUND":
+                    throw new PasteNotFoundException();
+                case "WRONG_LANG_ID":
+                    throw new LanguageNotFoundException();
+                case "ACCESS_DENIED":
+                    throw new AccessDeniedException();
+                case "CANNOT_SUBMIT_THIS_ MONTH_ANYMORE":
+                    throw new MonthlyLimitExceededException();
+                default:
+                    throw new IdeoneException("Unexpected status: " + status);
+            }
+        }
+
         private T Handle<T>(Func<Hashtable> dataFactory, Func<Hashtable, T> dataProcessor)
         {
             try
@@ -183,39 +205,51 @@ namespace IdeoneClient
 
         #endregion
 
+        #region GetSubmissionDetail
+
         private DateTime ConvertTime(string time)
         {
             var utc = DateTime.ParseExact(time, "yyyy-MM-dd HH:mm:ss", null).AddHours(-1);
             return new DateTime(utc.Year, utc.Month, utc.Day, utc.Hour, utc.Minute, utc.Second, DateTimeKind.Utc);
         }
 
+        private SubmissionDetail ProcessSubmissionDetailData(Hashtable data)
+        {
+            return new SubmissionDetail()
+            {
+                Time = (float)data["time"],
+                IsPublic = (bool)data["public"],
+                State = (SubmissionState)(int)data["status"],
+                Signal = (int)data["signal"],
+                CreateAt = ConvertTime((string)data["date"]),
+                LanguageID = (int)data["langId"],
+                LanguageName = (string)data["langName"],
+                Result = (SubmissionResult)(int)data["result"],
+                Memory = (int)data["memory"],
+                // Optional
+                Source = (string)data["source"],
+                Input = (string)data["input"],
+                Output = (string)data["output"],
+                Error = (string)data["stderr"],
+                CompileInfo = (string)data["cmpinfo"]
+            };
+        }
+
         public SubmissionDetail GetSubmissionDetail(string link, bool withSource, bool withInput, bool withOutput, bool withStdErr, bool withCompileInfo)
         {
-            return this.Handle(() =>
-            {
-                var data = this._soapService.GetSubmissionDetail(this._username, this._password, link, withSource, withInput, withOutput, withStdErr, withCompileInfo);
-                this.CheckError(data);
-
-                return new SubmissionDetail()
-                {
-                    Time = (float)data["time"],
-                    IsPublic = (bool)data["public"],
-                    State = (SubmissionState)(int)data["status"],
-                    Signal = (int)data["signal"],
-                    CreateAt = ConvertTime((string)data["date"]),
-                    LanguageID = (int)data["langId"],
-                    LanguageName = (string)data["langName"],
-                    Result = (SubmissionResult)(int)data["result"],
-                    Memory = (int)data["memory"],
-                    // Optional
-                    Source = (string)data["source"],
-                    Input = (string)data["input"],
-                    Output = (string)data["output"],
-                    Error = (string)data["stderr"],
-                    CompileInfo = (string)data["cmpinfo"]
-                };
-            });
+            return this.Handle(
+                () => this._soapService.GetSubmissionDetail(this._username, this._password, link, withSource, withInput, withOutput, withStdErr, withCompileInfo),
+                this.ProcessSubmissionDetailData);
         }
+
+        public Task<SubmissionDetail> GetSubmissionDetailAsync(string link, bool withSource, bool withInput, bool withOutput, bool withStdErr, bool withCompileInfo)
+        {
+            return this.HandleAsync(
+                cb => this._soapService.GetSubmissionDetailAsync(this._username, this._password, link, withSource, withInput, withOutput, withStdErr, withCompileInfo, cb),
+                this.ProcessSubmissionDetailData);
+        }
+
+        #endregion
 
         public Dictionary<string, object> Test()
         {
@@ -244,28 +278,6 @@ namespace IdeoneClient
             catch (Exception ex)
             {
                 throw new IdeoneException("Ideone API goes wrong: " + ex.Message, ex);
-            }
-        }
-
-        private void CheckError(Hashtable result)
-        {
-            var status = (string)result["error"];
-            switch (status)
-            {
-                case "OK":
-                    return;
-                case "AUTH_ERROR":
-                    throw new AuthenticationFailedException(this._username);
-                case "PASTE_NOT_FOUND":
-                    throw new PasteNotFoundException();
-                case "WRONG_LANG_ID":
-                    throw new LanguageNotFoundException();
-                case "ACCESS_DENIED":
-                    throw new AccessDeniedException();
-                case "CANNOT_SUBMIT_THIS_ MONTH_ANYMORE":
-                    throw new MonthlyLimitExceededException();
-                default:
-                    throw new IdeoneException("Unexpected status: " + status);
             }
         }
     }

@@ -25,6 +25,8 @@ namespace IdeoneClient.Ideone
         void GetSubmissionStatusAsync(string user, string pass, string link, Action<IdeoneSoapResult> callback);
 
         Hashtable GetSubmissionDetail(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStdErr, bool withCompileInfo);
+
+        void GetSubmissionDetailAsync(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStdErr, bool withCompileInfo, Action<IdeoneSoapResult> callback);
     }
 
     internal partial class IdeoneSoapService : IIdeoneSoapService
@@ -112,6 +114,26 @@ namespace IdeoneClient.Ideone
         public Hashtable GetSubmissionDetail(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStdErr, bool withCompileInfo)
         {
             return Utils.ParseXmlNodes((XmlNode[])this.getSubmissionDetails(user, pass, link, withSource, withInput, withOutput, withStdErr, withCompileInfo));
+        }
+
+        public void GetSubmissionDetailAsync(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStdErr, bool withCompileInfo, Action<IdeoneSoapResult> callback)
+        {
+            getSubmissionDetailsCompletedEventHandler onCompleted = null;
+
+            var state = new object();
+
+            onCompleted = new getSubmissionDetailsCompletedEventHandler((_, args) =>
+            {
+                if (args.UserState != state) return;
+
+                this.getSubmissionDetailsCompleted -= onCompleted;
+
+                callback(new IdeoneSoapResult(args));
+            });
+
+            this.getSubmissionDetailsCompleted += onCompleted;
+
+            this.getSubmissionDetailsAsync(user, pass, link, withSource, withInput, withOutput, withStdErr, withCompileInfo, state);
         }
     }
 }

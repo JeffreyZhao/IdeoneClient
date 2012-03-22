@@ -125,10 +125,30 @@ namespace IdeoneClient.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetDetail(string link, bool withSource = false, bool withInput = false, bool withOutput = true, bool withStdErr = true, bool withCompileInfo = true)
+        public void GetDetailAsync(string link, bool withSource = false, bool withInput = false, bool withOutput = true, bool withStdErr = true, bool withCompileInfo = true)
         {
-            var detail = this.IdeoneService.GetSubmissionDetail(link, withSource, withInput, withOutput, withStdErr, withCompileInfo);
-            return new JsonNetResult(detail);
+            this.AsyncManager.OutstandingOperations.Increment();
+
+            this.IdeoneService
+                .GetSubmissionDetailAsync(link, withSource, withInput, withOutput, withStdErr, withCompileInfo)
+                .ContinueWith(t =>
+                {
+                    if (t.Exception != null)
+                    {
+                        this.AsyncManager.Parameters["error"] = t.Exception;
+                    }
+                    else
+                    {
+                        this.AsyncManager.Parameters["detail"] = t.Result;
+                    }
+
+                    this.AsyncManager.OutstandingOperations.Decrement();
+                });
+        }
+
+        public ActionResult GetDetailCompleted(Exception error, SubmissionDetail detail)
+        {
+            return error == null ? new JsonNetResult(detail) : ErrorToResult(error);
         }
 
         private ActionResult CreateErrorResult(int statusCode, string message)
