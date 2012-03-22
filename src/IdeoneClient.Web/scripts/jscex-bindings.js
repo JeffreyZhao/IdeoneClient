@@ -10,7 +10,7 @@ $.ajaxAsync = function (options) {
         options.error = function (xhr, textStatus, errorThrow) {
             var ex;
 
-            if (xhr.getResponseHeader("Content-Type") == "application/json") {
+            if (xhr.getResponseHeader("Content-Type").indexOf("application/json") >= 0) {
                 var ex = $.parseJSON(xhr.responseText);
             } else {
                 var ex = { message: errorThrow };
