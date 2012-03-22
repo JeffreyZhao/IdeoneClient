@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Exceptions.cs" />
     <Compile Include="IdeoneService.cs" />
+    <Compile Include="IdeoneSoapResult.cs" />
     <Compile Include="Ideone\IdeoneSoapService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubmissionDetail.cs" />

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Net;
 using System.Xml;
+using System;
+using System.Threading.Tasks;
 
 namespace IdeoneClient.Ideone
 {
@@ -11,6 +13,8 @@ namespace IdeoneClient.Ideone
         Hashtable TestFunction(string user, string pass);
 
         Hashtable GetLanguages(string user, string pass);
+
+        void GetLanguagesAsync(string user, string pass, Action<IdeoneSoapResult> callback);
 
         Hashtable CreateSubmission(string user, string pass, string sourceCode, int languageId, string input, bool run, bool isPrivate);
 
@@ -44,6 +48,26 @@ namespace IdeoneClient.Ideone
         public Hashtable GetSubmissionDetail(string user, string pass, string link, bool withSource, bool withInput, bool withOutput, bool withStdErr, bool withCompileInfo)
         {
             return Utils.ParseXmlNodes((XmlNode[])this.getSubmissionDetails(user, pass, link, withSource, withInput, withOutput, withStdErr, withCompileInfo));
+        }
+
+        public void GetLanguagesAsync(string user, string pass, Action<IdeoneSoapResult> callback)
+        {
+            getLanguagesCompletedEventHandler onCompleted = null;
+
+            var state = new object();
+
+            onCompleted = new getLanguagesCompletedEventHandler((_, args) =>
+            {
+                if (args.UserState != state) return;
+
+                this.getLanguagesCompleted -= onCompleted;
+
+                callback(new IdeoneSoapResult(() => args.Result, args.Error, args.Cancelled));
+            });
+
+            this.getLanguagesCompleted += onCompleted;
+
+            this.getLanguagesAsync(user, pass, state);
         }
     }
 }

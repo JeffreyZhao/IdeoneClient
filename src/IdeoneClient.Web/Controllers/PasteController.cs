@@ -10,7 +10,7 @@ using System.Security.Authentication;
 
 namespace IdeoneClient.Web.Controllers
 {
-    public class PasteController : Controller
+    public class PasteController : AsyncController
     {
         private IdeoneService IdeoneService
         {
@@ -44,9 +44,17 @@ namespace IdeoneClient.Web.Controllers
         };
 
         [HttpGet]
-        public ActionResult GetLanguages()
+        public void GetLanguagesAsync()
         {
-            var languages = this.IdeoneService.GetLanguages();
+            this.AsyncManager.OutstandingOperations.Increment(1);
+
+            this.IdeoneService
+                .GetLanguagesAsync()
+                .ContinueWith(t => this.AsyncManager.Parameters["languages"] = t.Result);
+        }
+
+        public ActionResult GetLanguagesCompleted(Dictionary<int, string> languages)
+        {
             return new JsonNetResult(languages);
         }
 

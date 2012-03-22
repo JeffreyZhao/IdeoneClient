@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using IdeoneClient.Ideone;
+using System.Threading.Tasks;
 
 namespace IdeoneClient
 {
@@ -40,18 +41,89 @@ namespace IdeoneClient
             : this(new IdeoneSoapService(), username, password)
         { }
 
+        #region Helpers
+
+        private T Handle<T>(Func<Hashtable> dataFactory, Func<Hashtable, T> dataProcessor)
+        {
+            try
+            {
+                var data = dataFactory();
+                this.CheckError(data);
+                return dataProcessor(data);
+            }
+            catch (IdeoneException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new IdeoneException(ex.Message, ex);
+            }
+        }
+
+        private Task<T> HandleAsync<T>(Action<Action<IdeoneSoapResult>> caller, Func<Hashtable, T> dataProcessor)
+        {
+            var tcs = new TaskCompletionSource<T>();
+
+            caller(result =>
+            {
+                if (result.Cancelled)
+                {
+                    tcs.SetCanceled();
+                }
+                else if (result.Error != null)
+                {
+                    if (result.Error is IdeoneException)
+                    {
+                        tcs.SetException(result.Error);
+                    }
+                    else
+                    {
+                        tcs.SetException(new IdeoneException(result.Error.Message, result.Error));
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        tcs.SetResult(dataProcessor(result.Data));
+                    }
+                    catch (IdeoneException ex)
+                    {
+                        tcs.SetException(ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        tcs.SetException(new IdeoneException(ex.Message, ex));
+                    }
+                }
+            });
+
+            return tcs.Task;
+        }
+
+        #endregion
+
+        private Dictionary<int, string> ProcessGetLangaugesData(Hashtable data)
+        {
+            var languages = (Hashtable)data["languages"];
+            return languages.Cast<DictionaryEntry>().ToDictionary(
+                p => (int)p.Key,
+                p => (string)p.Value);
+        }
+
         public Dictionary<int, string> GetLanguages()
         {
-            return this.Handle(() =>
-            {
-                var data = this._soapService.GetLanguages(this._username, this._password);
-                this.CheckError(data);
+            return this.Handle(
+                () => this._soapService.GetLanguages(this._username, this._password),
+                this.ProcessGetLangaugesData);
+        }
 
-                var languages = (Hashtable)data["languages"];
-                return languages.Cast<DictionaryEntry>().ToDictionary(
-                    p => (int)p.Key,
-                    p => (string)p.Value);
-            });
+        public Task<Dictionary<int, string>> GetLanguagesAsync()
+        {
+            return this.HandleAsync(
+                resultHandler => this._soapService.GetLanguagesAsync(this._username, this._password, resultHandler),
+                this.ProcessGetLangaugesData);
         }
 
         public string CreateSubmission(int languageId, string sourceCode, string input, bool run, bool isPrivate)
