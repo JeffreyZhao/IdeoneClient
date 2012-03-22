@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using IdeoneClient.Ideone;
 using System.Threading.Tasks;
+using IdeoneClient.Ideone;
 
 namespace IdeoneClient
 {
@@ -251,34 +251,30 @@ namespace IdeoneClient
 
         #endregion
 
+        #region Test
+
+        private Dictionary<string, object> ProcessTestData(Hashtable data)
+        {
+            data.Remove("error");
+            return data.Cast<DictionaryEntry>().ToDictionary(
+                p => (string)p.Key,
+                p => p.Value);
+        }
+
         public Dictionary<string, object> Test()
         {
-            return this.Handle(() =>
-            {
-                var result = this._soapService.TestFunction(this._username, this._password);
-                this.CheckError(result);
-
-                result.Remove("error");
-                return result.Cast<DictionaryEntry>().ToDictionary(
-                    p => (string)p.Key,
-                    p => p.Value);
-            });
+            return this.Handle(
+                () => this._soapService.TestFunction(this._username, this._password),
+                this.ProcessTestData);
         }
 
-        private T Handle<T>(Func<T> body)
+        public Task<Dictionary<string, object>> TestAsync()
         {
-            try
-            {
-                return body();
-            }
-            catch (IdeoneException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                throw new IdeoneException("Ideone API goes wrong: " + ex.Message, ex);
-            }
+            return this.HandleAsync(
+                cb => this._soapService.TestFunctionAsync(this._username, this._password, cb),
+                this.ProcessTestData);
         }
+
+        #endregion
     }
 }

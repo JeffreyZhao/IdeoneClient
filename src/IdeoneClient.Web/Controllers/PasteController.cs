@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Security.Authentication;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 
 namespace IdeoneClient.Web.Controllers
 {
@@ -31,125 +29,7 @@ namespace IdeoneClient.Web.Controllers
             }
         }
 
-        private readonly JsonSerializerSettings DefaultSettings = new JsonSerializerSettings
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore,
-            Converters = new List<JsonConverter>()
-            {
-                new StringEnumConverter(),
-                new IsoDateTimeConverter()
-            }
-        };
-
-        [HttpGet]
-        public void GetLanguagesAsync()
-        {
-            this.AsyncManager.OutstandingOperations.Increment();
-
-            this.IdeoneService
-                .GetLanguagesAsync()
-                .ContinueWith(t =>
-                {
-                    if (t.Exception != null)
-                    {
-                        this.AsyncManager.Parameters["error"] = t.Exception;
-                    }
-                    else
-                    {
-                        this.AsyncManager.Parameters["languages"] = t.Result;
-                    }
-                    
-                    this.AsyncManager.OutstandingOperations.Decrement();
-                });
-        }
-
-        public ActionResult GetLanguagesCompleted(Exception error, Dictionary<int, string> languages)
-        {
-            return error == null ? new JsonNetResult(languages) : ErrorToResult(error);
-        }
-
-        [HttpPost]
-        [ValidateInput(false)]
-        public void CreateAsync(int languageId, string sourceCode, string input = "", bool run = true, bool isPrivate = true)
-        {
-            this.AsyncManager.OutstandingOperations.Increment();
-
-            this.IdeoneService
-                .CreateSubmissionAsync(languageId, sourceCode, input, run, isPrivate)
-                .ContinueWith(t =>
-                {
-                    if (t.Exception != null)
-                    {
-                        this.AsyncManager.Parameters["error"] = t.Exception;
-                    }
-                    else
-                    {
-                        this.AsyncManager.Parameters["link"] = t.Result;
-                    }
-
-                    this.AsyncManager.OutstandingOperations.Decrement();
-                });
-        }
-
-        public ActionResult CreateCompleted(Exception error, string link)
-        {
-            return error == null ? new JsonNetResult(link) : ErrorToResult(error);
-        }
-
-        [HttpGet]
-        public void GetStatusAsync(string link)
-        {
-            this.AsyncManager.OutstandingOperations.Increment();
-
-            this.IdeoneService
-                .GetSubmissionStatusAsync(link)
-                .ContinueWith(t =>
-                {
-                    if (t.Exception != null)
-                    {
-                        this.AsyncManager.Parameters["error"] = t.Exception;
-                    }
-                    else
-                    {
-                        this.AsyncManager.Parameters["status"] = t.Result;
-                    }
-
-                    this.AsyncManager.OutstandingOperations.Decrement();
-                });
-        }
-
-        public ActionResult GetStatusCompleted(Exception error, SubmissionStatus status)
-        {
-            return error == null ? new JsonNetResult(status) : ErrorToResult(error);
-        }
-
-        [HttpGet]
-        public void GetDetailAsync(string link, bool withSource = false, bool withInput = false, bool withOutput = true, bool withStdErr = true, bool withCompileInfo = true)
-        {
-            this.AsyncManager.OutstandingOperations.Increment();
-
-            this.IdeoneService
-                .GetSubmissionDetailAsync(link, withSource, withInput, withOutput, withStdErr, withCompileInfo)
-                .ContinueWith(t =>
-                {
-                    if (t.Exception != null)
-                    {
-                        this.AsyncManager.Parameters["error"] = t.Exception;
-                    }
-                    else
-                    {
-                        this.AsyncManager.Parameters["detail"] = t.Result;
-                    }
-
-                    this.AsyncManager.OutstandingOperations.Decrement();
-                });
-        }
-
-        public ActionResult GetDetailCompleted(Exception error, SubmissionDetail detail)
-        {
-            return error == null ? new JsonNetResult(detail) : ErrorToResult(error);
-        }
+        #region Helpers
 
         private ActionResult CreateErrorResult(int statusCode, string message)
         {
@@ -195,6 +75,88 @@ namespace IdeoneClient.Web.Controllers
             {
                 return CreateErrorResult(500, "Unexpected server error occurred.");
             }
+        }
+
+        private void ActionStart<T>(string resultName, Task<T> task)
+        {
+            this.AsyncManager.OutstandingOperations.Increment();
+
+            task.ContinueWith(t =>
+            {
+                if (t.Exception != null)
+                {
+                    this.AsyncManager.Parameters["error"] = t.Exception;
+                }
+                else
+                {
+                    this.AsyncManager.Parameters[resultName] = t.Result;
+                }
+
+                this.AsyncManager.OutstandingOperations.Decrement();
+            });
+        }
+
+        private ActionResult ActionCompleted<T>(Exception error, T result)
+        {
+            return error == null ? new JsonNetResult(result) : ErrorToResult(error);
+        }
+
+        #endregion
+
+        [HttpGet]
+        public void TestAsync()
+        {
+            this.ActionStart("result", this.IdeoneService.TestAsync());
+        }
+
+        public ActionResult TestCompleted(Exception error, Dictionary<string, object> result)
+        {
+            return ActionCompleted(error, result);
+        }
+
+        [HttpGet]
+        public void GetLanguagesAsync()
+        {
+            this.ActionStart("languages", this.IdeoneService.GetLanguagesAsync());
+        }
+
+        public ActionResult GetLanguagesCompleted(Exception error, Dictionary<int, string> languages)
+        {
+            return this.ActionCompleted(error, languages);
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public void CreateAsync(int languageId, string sourceCode, string input = "", bool run = true, bool isPrivate = true)
+        {
+            this.ActionStart("link", this.IdeoneService.CreateSubmissionAsync(languageId, sourceCode, input, run, isPrivate));
+        }
+
+        public ActionResult CreateCompleted(Exception error, string link)
+        {
+            return ActionCompleted(error, link);
+        }
+
+        [HttpGet]
+        public void GetStatusAsync(string link)
+        {
+            this.ActionStart("status", this.IdeoneService.GetSubmissionStatusAsync(link));
+        }
+
+        public ActionResult GetStatusCompleted(Exception error, SubmissionStatus status)
+        {
+            return error == null ? new JsonNetResult(status) : ErrorToResult(error);
+        }
+
+        [HttpGet]
+        public void GetDetailAsync(string link, bool withSource = false, bool withInput = false, bool withOutput = true, bool withStdErr = true, bool withCompileInfo = true)
+        {
+            this.ActionStart("detail", this.IdeoneService.GetSubmissionDetailAsync(link, withSource, withInput, withOutput, withStdErr, withCompileInfo));
+        }
+
+        public ActionResult GetDetailCompleted(Exception error, SubmissionDetail detail)
+        {
+            return this.ActionCompleted(error, detail);
         }
 
         protected override void OnException(ExceptionContext filterContext)

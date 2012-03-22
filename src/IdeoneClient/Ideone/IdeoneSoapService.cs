@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Net;
 using System.Xml;
-using System;
-using System.Threading.Tasks;
 
 namespace IdeoneClient.Ideone
 {
@@ -11,6 +10,8 @@ namespace IdeoneClient.Ideone
         IWebProxy Proxy { get; set; }
 
         Hashtable TestFunction(string user, string pass);
+
+        void TestFunctionAsync(string user, string pass, Action<IdeoneSoapResult> callback);
 
         Hashtable GetLanguages(string user, string pass);
 
@@ -34,6 +35,26 @@ namespace IdeoneClient.Ideone
         public Hashtable TestFunction(string user, string pass)
         {
             return Utils.ParseXmlNodes((XmlNode[])this.testFunction(user, pass));
+        }
+
+        public void TestFunctionAsync(string user, string pass, Action<IdeoneSoapResult> callback)
+        {
+            testFunctionCompletedEventHandler onCompleted = null;
+
+            var state = new object();
+
+            onCompleted = new testFunctionCompletedEventHandler((_, args) =>
+            {
+                if (args.UserState != state) return;
+
+                this.testFunctionCompleted -= onCompleted;
+
+                callback(new IdeoneSoapResult(args));
+            });
+
+            this.testFunctionCompleted += onCompleted;
+
+            this.testFunctionAsync(user, pass, state);
         }
 
         public Hashtable GetLanguages(string user, string pass)

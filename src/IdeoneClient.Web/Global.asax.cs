@@ -13,6 +13,11 @@ namespace IdeoneClient.Web
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                "Paste/Test",
+                "test",
+                new { controller = "Paste", action = "Test" });
+
+            routes.MapRoute(
                 "Paste/GetLanguages",
                 "languages",
                 new { controller = "Paste", action = "GetLanguages" }
