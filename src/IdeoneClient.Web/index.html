@@ -21,6 +21,7 @@
     </style>
 
     <script src="scripts/jquery-1.5.1.min.js"></script>
+    <script src="scripts/jquery.tmpl.min.js"></script>
     <script src="scripts/jscex.bundle.min.js"></script>
     <script src="scripts/jscex-bindings.js"></script>
     <script src="scripts/languages.js"></script>
@@ -85,10 +86,10 @@
             var langId = $("#sltLanguages").val();
             var code = $("#txtCode").val();
             var input = $("#txtInput").val();
-            var preStatus = $("#preStatus");
+            var divStatus = $("#divStatus");
 
             try {
-                preStatus.text("Creating submission...");
+                divStatus.text("Creating submission...");
                 var link = $await($.ajaxAsync({
                     url: "/pastes",
                     data: { languageId: langId, sourceCode: code, input: input },
@@ -103,7 +104,7 @@
                         auth: auth
                     }));
 
-                    preStatus.text(status.state);
+                    divStatus.text(status.state);
 
                     if (status.state == "Done") {
                         break;
@@ -119,23 +120,29 @@
                     auth: auth
                 }));
 
+                divStatus.empty();
+                var t = $("#tmplDetail").tmpl(detail);
+                $("#tmplDetail").tmpl(detail).appendTo(divStatus);
+
+                /*
                 var lines = [];
                 lines.push("Time: " + detail.time + "s");
                 lines.push("Memory: " + detail.memory + "kb");
 
                 if (detail.error) {
-                    lines.push("Error: " + detail.error);
+                lines.push("Error: " + detail.error);
                 }
 
                 if (detail.compileInfo) {
-                    lines.push("Compile Info: " + detail.compileInfo);
+                lines.push("Compile Info: " + detail.compileInfo);
                 }
 
                 if (detail.output) {
-                    lines.push("Output: " + detail.output);
+                lines.push("Output: " + detail.output);
                 }
 
                 preStatus.text(lines.join("\n"));
+                */
             } catch (ex) {
                 if (ex.source != "xhr") throw ex;
                 preStatus.text("Failed to execute the code: " + ex.message);
@@ -172,7 +179,17 @@
         <input type="button" id="btnExecute" value="Execute" disabled="disabled" onclick="execute().start();" />
     </p>
 
-    <pre id="preStatus" class="code">(... status shows here ...)</pre>
+    <script id="tmplDetail" type="text/x-jquery-tmpl">
+        <table border="1px" cellspacing="0" cellpadding="5">
+            <tr><th>Time</th><td>${time}s</td></tr>
+            <tr><th>Memory</th><td>${memory}kb</td></tr>
+            <tr><th>Compile Info</th><td>${compileInfo}</td></tr>
+            <tr><th>Error</th><td>${error}</td></tr>
+            <tr><th>Output</th><td><pre>${output}</pre></td></tr>
+        </table>
+    </script>
+
+    <div id="divStatus" class="code">(... status shows here ...)</div>
 
     <p>This page uses <a href="http://ideone.com">ideone.com</a> &copy; by <a href="http://sphere-research.com">Sphere Research Labs</a></p>
 </body>
