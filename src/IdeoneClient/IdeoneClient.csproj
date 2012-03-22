@@ -46,6 +46,7 @@
     <Compile Include="IdeoneService.cs" />
     <Compile Include="IdeoneSoapResult.cs" />
     <Compile Include="Ideone\IdeoneSoapService.cs" />
+    <Compile Include="Ideone\IIdeoneSoapRawResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SubmissionDetail.cs" />
     <Compile Include="SubmissionState.cs" />

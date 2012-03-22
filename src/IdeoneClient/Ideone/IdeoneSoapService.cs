@@ -62,7 +62,7 @@ namespace IdeoneClient.Ideone
 
                 this.getLanguagesCompleted -= onCompleted;
 
-                callback(new IdeoneSoapResult(() => args.Result, args.Error, args.Cancelled));
+                callback(new IdeoneSoapResult(args));
             });
 
             this.getLanguagesCompleted += onCompleted;

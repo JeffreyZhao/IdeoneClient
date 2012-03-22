@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Web.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using System.Security.Authentication;
 
 namespace IdeoneClient.Web.Controllers
 {
@@ -46,11 +45,15 @@ namespace IdeoneClient.Web.Controllers
         [HttpGet]
         public void GetLanguagesAsync()
         {
-            this.AsyncManager.OutstandingOperations.Increment(1);
+            this.AsyncManager.OutstandingOperations.Increment();
 
             this.IdeoneService
                 .GetLanguagesAsync()
-                .ContinueWith(t => this.AsyncManager.Parameters["languages"] = t.Result);
+                .ContinueWith(t =>
+                {
+                    this.AsyncManager.Parameters["languages"] = t.Result;
+                    this.AsyncManager.OutstandingOperations.Decrement();
+                });
         }
 
         public ActionResult GetLanguagesCompleted(Dictionary<int, string> languages)

@@ -434,7 +434,7 @@ namespace IdeoneClient.Ideone
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class getLanguagesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    public partial class getLanguagesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs, IIdeoneSoapRawResult
     {
 
         private object[] results;

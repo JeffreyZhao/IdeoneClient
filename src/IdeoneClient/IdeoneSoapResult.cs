@@ -1,27 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections;
 using System.Xml;
+using IdeoneClient.Ideone;
 
 namespace IdeoneClient
 {
-    public class IdeoneSoapResult
+    internal class IdeoneSoapResult
     {
-        private readonly Func<object[]> _dataFactory;
+        private readonly IIdeoneSoapRawResult _rawResult;
 
-        public IdeoneSoapResult(Func<object[]> dataFactory, Exception error, bool cancelled)
+        public IdeoneSoapResult(IIdeoneSoapRawResult rawResult)
         {
-            this._dataFactory = dataFactory;
-            this.Error = error;
-            this.Cancelled = cancelled;
+            this._rawResult = rawResult;
         }
 
-        public Hashtable Data { get { return Utils.ParseXmlNodes((XmlNode[])this._dataFactory()); } }
+        public Hashtable Data { get { return Utils.ParseXmlNodes((XmlNode[])this._rawResult.Result); } }
 
-        public Exception Error { get; private set; }
+        public Exception Error { get { return this._rawResult.Error; } }
 
-        public bool Cancelled { get; private set; }
+        public bool Cancelled { get { return this._rawResult.Cancelled; } }
     }
 }
