@@ -344,7 +344,7 @@ namespace IdeoneClient.Ideone
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class createSubmissionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs
+    public partial class createSubmissionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs, IIdeoneSoapRawResult
     {
 
         private object[] results;

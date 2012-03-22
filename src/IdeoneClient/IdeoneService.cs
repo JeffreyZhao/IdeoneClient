@@ -122,18 +122,27 @@ namespace IdeoneClient
         public Task<Dictionary<int, string>> GetLanguagesAsync()
         {
             return this.HandleAsync(
-                resultHandler => this._soapService.GetLanguagesAsync(this._username, this._password, resultHandler),
+                cb => this._soapService.GetLanguagesAsync(this._username, this._password, cb),
                 this.ProcessGetLangaugesData);
+        }
+
+        private string ProcessCreateSubmissionData(Hashtable data)
+        {
+            return (string)data["link"];
         }
 
         public string CreateSubmission(int languageId, string sourceCode, string input, bool run, bool isPrivate)
         {
-            return this.Handle(() =>
-            {
-                var data = this._soapService.CreateSubmission(this._username, this._password, sourceCode, languageId, input, run, isPrivate);
-                this.CheckError(data);
-                return (string)data["link"];
-            });
+            return this.Handle(
+                () => this._soapService.CreateSubmission(this._username, this._password, sourceCode, languageId, input, run, isPrivate),
+                this.ProcessCreateSubmissionData);
+        }
+
+        public Task<string> CreateSubmissionAsync(int languageId, string sourceCode, string input, bool run, bool isPrivate)
+        {
+            return this.HandleAsync(
+                cb => this._soapService.CreateSubmissionAsync(this._username, this._password, sourceCode, languageId, input, run, isPrivate, cb),
+                this.ProcessCreateSubmissionData);
         }
 
         public SubmissionStatus GetSubmissionStatus(string link)

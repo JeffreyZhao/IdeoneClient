@@ -63,9 +63,21 @@ namespace IdeoneClient.Web.Controllers
 
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult Create(int languageId, string sourceCode, string input = "", bool run = true, bool isPrivate = true)
+        public void CreateAsync(int languageId, string sourceCode, string input = "", bool run = true, bool isPrivate = true)
         {
-            var link = this.IdeoneService.CreateSubmission(languageId, sourceCode, input, run, isPrivate);
+            this.AsyncManager.OutstandingOperations.Increment();
+
+            this.IdeoneService
+                .CreateSubmissionAsync(languageId, sourceCode, input, run, isPrivate)
+                .ContinueWith(t =>
+                {
+                    this.AsyncManager.Parameters["link"] = t.Result;
+                    this.AsyncManager.OutstandingOperations.Decrement();
+                });
+        }
+
+        public ActionResult CreateCompleted(string link)
+        {
             return new JsonNetResult(link);
         }
 
