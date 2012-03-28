@@ -17,7 +17,6 @@ namespace IdeoneClient.Web.Controllers
             NullValueHandling = NullValueHandling.Ignore,
             Converters = new List<JsonConverter>()
             {
-                new StringEnumConverter(),
                 new IsoDateTimeConverter()
             }
         };

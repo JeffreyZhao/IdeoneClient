@@ -28,6 +28,18 @@
     <script src="scripts/base64.js"></script>
 
     <script>
+        var getStateText = function (state) {
+            if (state == 0) {
+                return "Done";
+            } else if (state == 1) {
+                return "Compiling";
+            } else if (state == 3) {
+                return "Running";
+            } else {
+                return (-state) + " paste(s) waiting for being executed.";
+            }
+        }
+
         $.ajaxSetup({
             type: "post",
             dataType: "json",
@@ -104,9 +116,10 @@
                         auth: auth
                     }));
 
-                    divStatus.text(status.state);
-
-                    if (status.state == "Done") {
+                    var stateText = getStateText(status.state);
+                    divStatus.text(stateText);
+                    
+                    if (stateText == "Done") {
                         break;
                     }
 
@@ -123,26 +136,6 @@
                 divStatus.empty();
                 var t = $("#tmplDetail").tmpl(detail);
                 $("#tmplDetail").tmpl(detail).appendTo(divStatus);
-
-                /*
-                var lines = [];
-                lines.push("Time: " + detail.time + "s");
-                lines.push("Memory: " + detail.memory + "kb");
-
-                if (detail.error) {
-                lines.push("Error: " + detail.error);
-                }
-
-                if (detail.compileInfo) {
-                lines.push("Compile Info: " + detail.compileInfo);
-                }
-
-                if (detail.output) {
-                lines.push("Output: " + detail.output);
-                }
-
-                preStatus.text(lines.join("\n"));
-                */
             } catch (ex) {
                 if (ex.source != "xhr") throw ex;
                 preStatus.text("Failed to execute the code: " + ex.message);
