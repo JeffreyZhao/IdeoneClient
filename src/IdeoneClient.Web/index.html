@@ -24,10 +24,72 @@
     <script src="scripts/jquery.tmpl.min.js"></script>
     <script src="scripts/jscex.bundle.min.js"></script>
     <script src="scripts/jscex-bindings.js"></script>
-    <script src="scripts/languages.js"></script>
     <script src="scripts/base64.js"></script>
+    <script src="scripts/ace/ace-noconflict.js"></script>
+    <script src="scripts/ace/mode-all-noconflict.js"></script>
+    <script src="scripts/ace/theme-twilight-noconflict.js"></script>
 
     <script>
+        var languages = {
+            3: { aceMode: "perl", source: "#!\/usr\/bin\/perl\n\nwhile (($_=<>)!=42) {print $_;}", "input": "1\n2\n10\n42\n11\n" },
+            1: { aceMode: "c_cpp", source: "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    int intNum = 0;\n    \n    cin >> intNum;\n    while (intNum != 42) {\n        cout << intNum << \"\\n\";\n        cin >> intNum;\n    }\n\n    return 0;\n\n}", "input": "1\n2\n10\n42\n11\n" },
+            2: { source: "program test;\nvar x: integer;\nbegin\n  repeat\n    readln(x);\n    if x<>42 then writeln(x);\n  until x=42\nend.", "input": "1\n2\n10\n42\n11\n" },
+            4: { aceMode: "python", source: "n = int(raw_input())\nwhile n != 42:\n    print n\n    n = int(raw_input())", "input": "1\n2\n10\n42\n11\n" },
+            11: { aceMode: "c_cpp", source: "#include <stdio.h> \n\nint main(void) { \n  int x; \n  for(; scanf(\"%d\",&x) > 0 && x != 42; printf(\"%d\\n\", x)); \n  return 0; \n} ", "input": "1\n2\n10\n42\n11\n" },
+            7: { source: "with Ada.Integer_Text_Io, Ada.Text_Io;\nuse Ada.Integer_Text_Io, Ada.Text_Io;\n\nprocedure Test is\n   subtype Small is Integer range 0..99;\n   Input : Small;\nbegin\n   loop\n      Get(Input);\n      if Input = 42 then\n         exit;\n      else \n         Put (Input);  \n         New_Line;\n      end if;\n   end loop;\nend;", "input": "1\n2\n10\n42\n11\n" },
+            5: { source: "        program TEST \n                integer ans \n                do \n                        read (*,*) ans \n                        if (ans.eq.42) stop \n                        write (*,*) ans \n                enddo \n                stop \n        end", "input": "1\n2\n10\n42\n11\n" },
+            12: { source: ">+[>>,----------[>,----------]+++++[<-------->-]<[>>-<]>+[\n-<+++++++[<------>-]<[>>-<]>+[\n-<<[>>-<]>+[<<->>->]>\n]<+++++++[<++++++>-]>>\n]<++++++++[<+++++>-]<\n[<]<[>>[++++++++++.>]++++++++++.[[-]<]]<]", "input": "1\n2\n10\n42\n11\n" },
+            10: { aceMode: "java", source: "\/* package whatever; \/\/ don't place package name! *\/\n\n\/* The class name doesn't have to be Main, as long as the class is not public. *\/\nclass Main\n{\n  public static void main (String[] args) throws java.lang.Exception\n  {\n     java.io.BufferedReader r = new java.io.BufferedReader (new java.io.InputStreamReader (System.in));\n     String s;\n     while (!(s=r.readLine()).startsWith(\"42\")) System.out.println(s);\n  }\n}", "input": "1\n2\n10\n42\n11\n" },
+            13: { source: "    global _start\n\nsection .data\n    buffer    dw    0h\n\nsection .text\n\n_start:\n    mov        ecx, buffer\n    mov        edx, 02h\n    call        read\n    mov        cx, word [buffer]\n    cmp        cx, 3234h\n    je        exit\n    cmp        ch, 0ah\n    je        one_dig\n    jmp        two_dig\n\none_dig:\n    mov        ecx, buffer\n    mov        edx, 02h\n    call        write\n    jmp        _start\n\ntwo_dig:\n    mov        ecx, buffer\n    mov        edx, 02h\n    call        write\n    mov        edx, 01h\n    mov        ecx, buffer\n    call        read            ; read the 0ah\n    mov        ecx, buffer\n    call        write            ; write the 0ah\n    jmp        _start\n\nexit:\n    mov        eax, 01h        ; exit()\n    xor        ebx, ebx        ; errno\n    int        80h\n\n\nread:\n    mov        eax, 03h        ; read()\n    mov        ebx, 00h        ; stdin\n    int        80h\n    ret\nwrite:\n    mov        eax, 04h        ; write()\n    mov        ebx, 01h        ; stdout\n    int        80h\n    ret", "input": "1\n2\n10\n42\n11\n" },
+            30: { source: "using System;\r\npublic class Test\r\n{\r\n    public static Main() : void\r\n    {\r\n        def solve() : void {\r\n            def i = int.Parse(Console.ReadLine());\r\n            unless (i == 42) {\r\n                Console.WriteLine(i);\r\n                solve();\r\n            }\r\n        }\r\n        solve();\r\n    }\r\n}", "input": "1\n2\n10\n42\n11\n" },
+            21: { source: "main = do\n         x <- readNum\n         if x == 42\n           then putStr(\"\")\n           else do\n             putStr  (show (x) ++ \"\\n\")\n             main\n       where\n         readNum :: IO Integer\n         readNum = do\n           line <- getLine\n           readIO line", "input": "1\n2\n10\n42\n11\n" },
+            17: { aceMode: "ruby", source: "while (s=gets.chomp()) != \"42\" do puts s end", "input": "1\n2\n10\n42\n11\n" },
+            26: { aceMode: "lua", source: "local read, write = io.read, io.write\nlocal num, nl = '*n', '\\n'\nwhile true do\n  local a = read(num)\n  if a == 42 then return end\n  write(a, nl)\nend", "input": "1\n2\n10\n42\n11\n" },
+            9: { source: "DO ,915 <- #1\r\nDO ,2216 <- #2\r\nDO .2216 <- #1\r\nDO .129 <- #0\r\nDO .1215 <- #0\r\n\r\n(19) PLEASE DON'T FORGET #1\r\nDO REINSTATE FORGETTING\r\nPLEASE DO (18514) NEXT\r\nDO .2 <- #10\r\nDO (1) NEXT\r\nPLEASE NOTE THERE WAS A NEWLINE\r\nDO .1 <- .2216\r\nDO .2 <- #3\r\nDO (11) NEXT\r\nDO .1 <- ,2216 SUB #1\r\nDO .2 <- #52\r\nDO (11) NEXT\r\nDO .1 <- ,2216 SUB #2\r\nDO .2 <- #50\r\nDO (11) NEXT\r\nPLEASE GIVE UP\r\n(11) DO (31513) NEXT\r\n(12) DO FORGET #1\r\nDO .8 <- #1\r\nDO COME FROM (998)\r\nDO .1 <- .8\r\nDO .2 <- .2216\r\nDO (3) NEXT\r\nDO .1 <- #10\r\nPLEASE DO (23189) NEXT\r\nDO .2216 <- #1\r\nPLEASE DO (19) NEXT\r\n(3) DO (31513) NEXT\r\nPLEASE FORGET #1\r\nDO .1 <- ,2216 SUB .8\r\nPLEASE DO (23189) NEXT\r\nDO .1 <- .8\r\nDO .2 <- #1\r\nPLEASE DO (1000) NEXT\r\n(998) DO .8 <- .3\r\n(1) DO (31513) NEXT\r\nPLEASE NOTE THERE WAS NO NEWLINE\r\nPLEASE FORGET #1\r\nDO ,2216 SUB .2216 <- .1\r\nDO .1 <- .2216\r\nDO .2 <- #1\r\nPLEASE DO (1000) NEXT\r\nDO .2216 <- .3\r\nDO (19) NEXT\r\n\r\n(31513) PLEASE NOTE RESUMES #2 IF EQUAL ELSE #1\r\nDO RESUME '?#32768$\"#65535~'\"?.1$.2\"~\"#0$#65535\"'\"'~'#32768$#1'\r\n\r\n(18514) PLEASE STASH .2+.3\r\nDO WRITE IN ,915\r\nDO .1 <- ,915 SUB #1\r\nDO .2 <- .128\r\nPLEASE DO (1000) NEXT\r\nDO .1 <- .3~#255\r\nDO .128 <- .1\r\nPLEASE RETRIEVE .2+.3\r\nDO RESUME #1\r\n\r\n(23189) PLEASE STASH .1+.2+.3\r\nDO .1 <- !1~#15'$!1~#240'\r\nDO .1 <- !1~#15'$!1~#240'\r\nDO .1 <- !1~#15'$!1~#240'\r\nDO .2 <- .1\r\nDO .1 <- '#256$.129'~'#256$#255'\r\nDO .129 <- .2\r\nPLEASE DO (1010) NEXT\r\nDO ,915 SUB #1 <- .3~#255\r\nDO READ OUT ,915\r\nPLEASE RETRIEVE .1+.2+.3\r\nDO RESUME #1\r\n\r\nPLEASE REMEMBER TO GIVE UP", "input": "1\n2\n10\n42\n11\n" },
+            40: { aceMode: "sql", source: "create table tbl(str varchar(20));\ninsert into tbl values('Hello world!');\nselect * from tbl;", "input": "" },
+            8: { aceMode: "ocaml", source: "while true do\n let n = read_int () in\n if n = 42 then exit 0;\n print_int n;\n print_newline ()\ndone;;", "input": "1\n2\n10\n42\n11\n" },
+            23: { source: "|c number|\n[\n   number:=0.\n   [ (c := stdin next) asciiValue ~= 10 ]\n   whileTrue:\n   [number := (number * 10) + (c asciiValue) - 48.].\n   number ~= 42\n]\nwhileTrue:\n[Transcript show: number printString; cr.]\n!", "input": "1\n2\n10\n42\n11\n" },
+            39: { aceMode: "scala", source: "import java.io.{BufferedReader, InputStreamReader}\n\nobject Main {\n  def main(args: Array[String]) {\n      var stdin =\n         new BufferedReader(new InputStreamReader(System.in));\n    var line = stdin.readLine();\n    while(false == line.equals(\"42\")) {\n      System.out.println(line);\n      line = stdin.readLine();\n    }\n  }\n}", "input": "1\n2\n10\n42\n11\n" },
+            28: { aceMode: "sh", source: "#!\/bin\/bash\nwhile true\ndo\n    read line\n    if [ $line -eq 42 ]\n    then \n        exit 0\n    fi\n    echo $line\ndone", "input": "1\n2\n10\n42\n11\n" },
+            27: { aceMode: "csharp", source: "using System;\npublic class Test\n{\n    public static void Main()\n    {\n        int n;\n        while ((n = int.Parse(Console.ReadLine()))!=42)\n            Console.WriteLine(n);\n    }\n}", "input": "1\n2\n10\n42\n11\n" },
+            104: { source: "{\n    num = $1;\n    if(num == 42)\n        exit;\n    else\n        printf(\"%d\\n\", num);\n}", "input": "1\n2\n10\n42\n11\n" },
+            15: { source: "program :- get_char(X),get_char(Y),check(X,Y). \ncheck('4','2'):-!. \ncheck(X,Y):-write(X),get_char(Z),check(Y,Z).\n:- program.", "input": "1\n2\n10\n9\n0\n10\n42" },
+            106: { source: "    IDENTIFICATION DIVISION.\n    PROGRAM-ID. SAMPLE.\n\n    ENVIRONMENT DIVISION.\n\n    DATA DIVISION.\n    WORKING-STORAGE SECTION.\n    77 n PIC Z9 .\n\n    PROCEDURE DIVISION.\n        ACCEPT n\n        PERFORM UNTIL n = 42\n            DISPLAY n\n            ACCEPT n\n        END-PERFORM.\n        STOP RUN.\n", "input": "10\n43\n5\n42\n1\n" },
+            25: { source: "void main (String[] args)\r\n{\r\n  java.io.BufferedReader r = new java.io.BufferedReader (new java.io.InputStreamReader (System.in));\r\n  String s;\r\n  while (!(s=notNull(r.readLine())).startsWith(\"42\")) System.out.println(s);\r\n}", "input": "1\n2\n10\n42\n11\n" },
+            33: { source: "(define (do_it n)\n  (define (print_it n)\n    (display n)\n    (newline))\n  (cond ((not(= n 42))\n    (print_it n)\n    (do_it (read)))\n    ))\n\n(do_it (read))", "input": "1\n2\n10\n42\n11\n" },
+            34: { source: "#include <stdio.h> \n\nint main(void){  \n\n  int liczba;  \n\n  for ( ; (scanf(\"%d\",&liczba) > 0) && (liczba != 42) ; printf(\"%d\\n\", liczba) );  \n\n  return 0;\n}", "input": "1\n2\n10\n42\n11\n" },
+            35: { aceMode: "javascript", source: "importPackage(java.io);\nimportPackage(java.lang);\n \nvar reader = new BufferedReader( new InputStreamReader(System['in']) );\n\nwhile (true){\n    var line = reader.readLine();\n    if (line==null || line==\"42\") {\n       break;\n    }\n    else {\n       System.out.println(line);\n    }\n}", "input": "1\n2\n10\n42\n11\n" },
+            29: { aceMode: "php", source: "<?php\n\n  $hi = fopen('php:\/\/stdin', \"r\");\n  $ho = fopen('php:\/\/stdout', \"w\");\n\n  while (true) \n  {\n    fscanf($hi, \"%d\", $n);\n    if ($n == 42)\n      break;\n    fwrite($ho, sprintf(\"%d\\n\", $n));\n  }\n\n  fclose($ho);\n  fclose($hi);\n?>", "input": "1\n2\n10\n42\n11\n" },
+            22: { source: "program test;\n\n var x:byte;\n\n begin\n      readln(x);\n      while x<>42 do\n       begin\n            writeln(x);\n            readln(x)\n       end\n end.", "input": "1\n2\n10\n42\n11\n" },
+            16: { source: "procedure main () \n    while (l := read()) ~= 42 do \n       write(l); \n end", "input": "1\n2\n10\n42\n11\n" },
+            101: { source: "Imports System\n\nPublic Class Test\n   Public Shared Sub Main() \n       Dim n As Integer\n       n = Console.ReadLine\n       Do While n <> 42\n           System.Console.WriteLine(n)\n           n = Console.ReadLine\n       Loop\n   End Sub\nEnd Class", "input": "1\n2\n10\n42\n11\n" },
+            32: { source: "(loop \n    for line = (read-line *standard-input* nil nil) \n    while (not (equal line \"42\")) \n    do (format t \"~A~%\" line))", "input": "1\n2\n10\n42\n11\n" },
+            105: { source: "{\n    num = $1;\n    if(num == 42)\n        exit;\n    else\n        printf(\"%d\\n\", num);\n}", "input": "1\n2\n10\n42\n11\n" },
+            119: { source: "functor\nimport\n   Application\n   System\n\ndefine\n   {System.showInfo 'Hello World!'}\n   {Application.exit 0}\n\nend\n", "input": "" },
+            38: { source: "set liczba [gets stdin]\nwhile { $liczba != 42 } { puts $liczba; set liczba [gets stdin] }", "input": "1\n2\n10\n42\n11\n" },
+            102: { source: "import std.c.stdio;\n\nint main() {\n    int x;\n    while (scanf(\"%d\", &x) && x!=42) printf (\"%d\\n\", x);\n    return 0;\n}", "input": "1\n2\n10\n42\n11\n" },
+            36: { source: "-module(prog).\n-export([main\/0]).\n\nmain() ->\n        loop().\nloop() ->\n        case io:fread( \"\",\"~d\" ) of\n                eof ->\n                        true;\n                {ok, X} ->\n                        [Y] = X,\n                        if\n                                Y == 42 ->\n                                        true;\n                                true ->\n                                        io:fwrite( \"~B\\n\",X ),\n                                        loop()\n                        end\n        end.", "input": "1\n2\n10\n42\n11\n" },
+            43: { source: "#import <objc\/objc.h>\n#import <objc\/Object.h>\n\n@interface TestObj : Object\n{\n    int num;\n}\n- (void)foo;\n@end\n\n@implementation TestObj\n\n- (void)foo {\n     printf(\"foo\\n\");\n}\n\nint main()\n{\n    id obj = [[TestObj alloc] init];\n    [obj foo];\n    return 0;\n}\n@end", "input": "" },
+            44: { source: "#include <iostream>\nusing namespace std;\n\nint main() {\n\n    int intNum = 0;\n    \n    cin >> intNum;\n    while (intNum != 42) {\n        cout << intNum << \"\\n\";\n        cin >> intNum;\n    }\n\n    return 0;\n\n}", "input": "1\n2\n10\n42\n11\n" },
+            123: { source: "! Copyright (C) 2006 Daniel Ehrenberg\n! See http:\/\/factorcode.org\/license.txt for BSD license.\nUSING: kernel math sequences strings io combinators ascii ;\nIN: rot13\n\n: rotate ( ch base -- ch ) [ - 13 + 26 mod ] [ + ] bi ;\n\n: rot-letter ( ch -- ch )\n    {\n        { [ dup letter? ] [ CHAR: a rotate ] }\n        { [ dup LETTER? ] [ CHAR: A rotate ] }\n        [ ]\n    } cond ;\n\n: rot13 ( string -- string ) [ rot-letter ] map ;\n\n: rot13-demo ( -- )\n    \"Please enter a string:\" print flush\n    readln [\n        \"Your string: \" write dup print\n        \"Rot13:       \" write rot13 print\n    ] when* ;\n\nMAIN: rot13-demo\n\nrot13-demo\n", "input": "Hello World!" },
+            124: { aceMode: "ocaml", source: "open System\n\nlet mutable num = System.Console.ReadLine()\nwhile not(System.String.Equals(num, \"42\", System.StringComparison.CurrentCultureIgnoreCase)) do\n    System.Console.Write(num)\n    num <- System.Console.ReadLine()\n    System.Console.WriteLine()\n", "input": "1\n2\n10\n42\n11\n" },
+            112: { aceMode: "javascript", source: "while((num = readline()) != 42) {\n    print(num);\n}", "input": "1\n2\n10\n42\n11\n" },
+            116: { aceMode: "python", source: "n = int(input())\nwhile n != 42:\n    print(n)\n    n = int(input())", "input": "1\n2\n10\n42\n11\n" },
+            45: { source: ".data\nx:\n    .long    0\ns:\n    .string \"%d\\n\\0\"\n\n.text\n.global main\nmain:                # int main()\n                # {\nloop:                #     for (;;) {\n    pushl    $x        #         scanf(\"%d\", &x);\n    pushl    $s\n    call    scanf\n    addl    $8, %esp\n\n    movl    x, %eax        #         if (x == 42) break;\n    subl    $42, %eax\n    jz    break\n\n    pushl    x        #         printf(\"%d\\n\", x);\n    pushl    $s\n    call    printf\n    addl    $8, %esp\n\n    jmp    loop        #     }\nbreak:\n\n    xor    %eax, %eax    #     return 0;\n    ret\n                # }\n", "input": "1\n2\n10\n42\n11\n" },
+            114: { source: "package main\nimport \"fmt\"\nfunc main(){\n    var n int\n    fmt.Scanf(\"%d\",&n)\n    for n!=42 {\n        fmt.Printf(\"%d\\n\",n)\n        fmt.Scanf(\"%d\",&n)\n    }\n}\n", "input": "1\n2\n10\n42\n11\n" },
+            111: { aceMode: "clojure", source: "(defn bottles [n & [capitalize]]\n  (str (if (> n 0) n (if capitalize \"No more\" \"no more\"))\n    \" bottle\" (if (= 1 n) \"\" \"s\") \" of beer\" ))\n\n(defn bot-wall [n & cap] (str (bottles n cap) \" on the wall\"))\n\n(defn sing\n  ;  Default is 99 times.\n  ([]  (sing 99))\n  ([stock]\n    (doseq [i (range stock -1 -1)]\n      (printf \"%s, %s.\\n%s.\\n\\n\"\n        (bot-wall i true) (bottles i)\n        (apply str\n          (if (> i 0)\n            [\"Take one down and pass it around, \" (bot-wall (dec i))]\n            [\"Go to the store and buy some more, \" (bot-wall stock)]\n          ))))))\n\n(sing)", "input": "" },
+            125: { source: "x = int(input()) \nwhile x != 42\n  printl(x)\n  x = int(input())\nend\n", "input": "1\n2\n10\n42\n11\n" },
+            110: { source: "\/* read the numbers; notice: ech line of the input must be followed by an EOF character *\/\nx = read();\n\n\/* multiplication table *\/\nfor (i=1; i<=x; ++i)\n{\n    for (j=1; j<=x; ++j) print i*j, \"\    \"\n    print \"\\n\"\n}\n\n\/* compute the pi number accurately to 10 decimal places *\/\nscale=x\nprint \"\\npi = \", 4*a(1), \"\\n\"\n\n\/* factorial *\/\ndefine f(n)\n{\n    if (n <= 1) return 1;\n    return n * f(n-1);\n}\n\nprint \"\\n\";\nprint \"1! = \", f(1), \"\\n\";\nprint \"5! = \", f(5), \"\\n\";\nprint x, \"! = \", f(x), \"\\n\";\n", "input": "10" },
+            122: { source: "proc GetBottleNumber(n: int): string =\n  var bs: string\n  if n == 0:\n    bs = \"No more bottles\"\n  elif n == 1:\n    bs = \"1 bottle\"\n  else:\n    bs = $n & \" bottles\"\n  return bs & \" of beer\"\n\nfor bn in countdown(99, 1):\n  var cur = GetBottleNumber(bn)\n  echo(cur, \" on the wall, \", cur, \".\")\n  echo(\"Take one down and pass it around, \", GetBottleNumber(bn-1), \" on the wall.\\n\")\n\necho \"No more bottles of beer on the wall, no more bottles of beer.\"\necho \"Go to the store and buy some more, 99 bottles of beer on the wall.\"", "input": "" },
+            121: { aceMode: "groovy", source: "class Greet {\n  def name\n  Greet(who) { name = who[0].toUpperCase() +\n                      who[1..-1] }\n  def salute() { println \"Hello $name!\" }\n}\n\ng = new Greet('world')  \/\/ create object\ng.salute()\n", "input": "" },
+            117: { source: "song<-function(n=99) {\n  a<-\" bottle\"\n  b<-\" of beer on the wall, \"\n  c<-\" of beer. \"\n  d<-\"Take one down and pass it around: \"\n  #\n  ## set \"beer counter\" vector\n  counter<-c(as.character(n:1),\"No more\")\n  # \n  ## set plural \n  s<-ifelse(counter==\"1\",\"\",\"s\")\n  #\n  ## build up the verses vector\n  firsthalf<-paste(counter,a,s,b,counter,a,s,c,sep=\"\")\n  sechalf1.99<-paste(d,counter[-1],a,s[-1],b,sep=\"\")\n  sechalf100<-paste(\"Go to the store and buy some more: \",\n                    counter[1],a,\"s\",b,sep=\"\")\n  ##\n  ## song is the vector of n+1 complete verses\n  song<-paste(firsthalf,c(sechalf1.99,sechalf100),sep=\"\")\n}  \n\nprint(song())", "input": "" },
+            19: { source: "int main() {\n  string s=Stdio.stdin->gets();\n  while (s!=\"42\") {\n    write(s+\"\\n\");\n    s=Stdio.stdin->gets();\n  }\n  return 0;\n}", "input": "1\n2\n10\n42\n11\n" },
+            14: { source: "(defrule readin\n    ?f<-(initial-fact)\n=>\n    (retract ?f)\n    (assert (number (read)))\n)\n\n(defrule writeout\n    ?f<-(number ?n)(test (<> ?n 42))\n=>\n    (retract ?f)\n    (printout t ?n crlf)\n    (assert (initial-fact))\n)\n\n(reset)\n\n(run)\n\n(exit)\n", "input": "1\n2\n10\n42\n11\n" },
+            54: { aceMode: "perl", source: "while (($_ = $*IN.get) != 42) { say $_ }\n", "input": "1\n2\n10\n42\n11\n" },
+            6: { source: "\n   \n   \t\n \n \t\n\t\t\t\t\t \n    \t \t \t \n\t  \t\n\t \t\n\t\n \t   \t \t \n\t\n  \n \n \n\n  \t\n\n\n\n", "input": "1\n2\n10\n42\n11\n" },
+            55: { aceMode: "java" }
+        }
+
         var getStateText = function (state) {
             if (state == 0) {
                 return "Done";
@@ -49,11 +111,26 @@
             }
         });
 
+        var setLanguageMode = function () {
+            var languageId = $("#sltLanguages").val();
+            var lang = languages[languageId];
+
+            var aceMode = (lang ? lang.aceMode : null) || "text";
+            var LanguageMode = ace.require("ace/mode/" + aceMode).Mode;
+            editor.getSession().setMode(new LanguageMode());
+        }
+
         var loadSample = function () {
             var languageId = $("#sltLanguages").val();
             var lang = languages[languageId];
-            $("#txtCode").val(lang ? lang.source : "");
+
+            var source = (lang ? lang.source : null) || "";
+            editor.getSession().setValue(source);
             $("#txtInput").val(lang ? lang.input : "");
+
+            var aceMode = (lang ? lang.aceMode : null) || "text";
+            var LanguageMode = ace.require("ace/mode/" + aceMode).Mode;
+            editor.getSession().setMode(new LanguageMode());
         }
 
         var Async = Jscex.Async;
@@ -76,6 +153,9 @@
                         .text(value));
                 });
 
+                sltLanguages.change(setLanguageMode);
+                setLanguageMode();
+
                 $("#btnLoadSample").removeAttr("disabled");
                 $("#btnExecute").removeAttr("disabled");
             } catch (ex) {
@@ -96,7 +176,7 @@
             $("#btnExecute").attr("disabled", "disabled");
 
             var langId = $("#sltLanguages").val();
-            var code = $("#txtCode").val();
+            var code = editor.getSession().getValue();
             var input = $("#txtInput").val();
             var divStatus = $("#divStatus");
 
@@ -118,7 +198,7 @@
 
                     var stateText = getStateText(status.state);
                     divStatus.text(stateText);
-                    
+
                     if (stateText == "Done") {
                         break;
                     }
@@ -144,10 +224,6 @@
                 $("#btnExecute").removeAttr("disabled");
             }
         }));
-
-        $(document).ready(function () {
-            loadLanguages().start();
-        });
     </script>
 </head>
 <body>
@@ -156,6 +232,10 @@
         <input type="button" id="btnLoadSample" value="Load Sample" disabled="disabled" onclick="loadSample();" />
     </p>
 
+    <script>
+        loadLanguages().start();
+    </script>
+
     <p>
         Username: <input type="text" id="txtUserName" />
         Password: <input type="password" id="txtPassword" />
@@ -163,7 +243,12 @@
     </p>
 
     <p>Code:</p>
-    <p><textarea id="txtCode" class="code"></textarea></p>
+    <pre id="txtCode" class="code" style="position:relative;"></pre>
+
+    <script>
+        var editor = ace.edit("txtCode");
+        editor.setTheme("ace/theme/twilight");
+    </script>
 
     <p>Input:</p>
     <p><textarea id="txtInput" class="code"></textarea></p>
